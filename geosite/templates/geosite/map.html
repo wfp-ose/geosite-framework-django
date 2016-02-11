@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load sparc2_tags %}
+{% load geosite2_tags %}
 {% block extra_head %}
 <script>
   var map_config = {{ map_config_json|safe }};
@@ -18,28 +18,28 @@
 <div class="container-fluid">
     {%block header %}{% endheader %}
     <div
-      id="sparc-main"
-      class="row sparc-row sparc-main sparc-controller"
-      ng-controller="sparc-main"
-      data-controller-name="sparc-main"
-      data-controller-type="sparc-main">
+      id="geosite-main"
+      class="row geosite-row geosite-main geosite-controller"
+      ng-controller="geosite-main"
+      data-controller-name="geosite-main"
+      data-controller-type="geosite-main">
       {% include "geosite/_includes/sidebar.html" %}
       <div
-        id="sparc-map"
-        class="row sparc-row sparc-map sparc-controller"
-        ng-controller="sparc-map"
-        data-controller-name="sparc-map"
-        data-controller-type="sparc-map">
+        id="geosite-map"
+        class="row geosite-row geosite-map geosite-controller"
+        ng-controller="geosite-map"
+        data-controller-name="geosite-map"
+        data-controller-type="geosite-map">
         {% block map_controllers %}
         {% include "geosite/_includes/map_legend.html" %}
         {% include "geosite/_includes/map_sidebar_toggle.html" %}
         {% include "geosite/_includes/map_calendar.html" %}
         {% endblock %}
         <div id="map"
-          class="sparc-controller sparc-map-map"
-          ng-controller="sparc-map-map"
-          data-controller-name="sparc-map-map"
-          data-controller-type="sparc-map-map">
+          class="geosite-controller geosite-map-map"
+          ng-controller="geosite-map-map"
+          data-controller-name="geosite-map-map"
+          data-controller-type="geosite-map-map">
         </div>
       </div>
     </div>
