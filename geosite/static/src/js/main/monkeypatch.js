@@ -3,7 +3,7 @@ c3.chart.internal.fn.getBarW = function(axis, barTargetsNum)
     var $$ = this;
     var config = $$.config;
     var w = undefined;
-    if($.isNumeric(config.bar_width))
+    if(typeof config.bar_width === 'number')
     {
       var v = config.bar_width;
       v = config.bar_width_max && v > config.bar_width_max ? config.bar_width_max : v;
@@ -26,20 +26,9 @@ c3.chart.internal.fn.getShapeX = function (offset, targetsNum, indices, isSub) {
     return function (d, i) {
         var index = d.id in indices ? indices[d.id] : 0;
         if(d.x || d.x === 0)
-        {
-          if(c3.chart.internal.fn.isFunction(offset))
-          {
-              return scale(d.x) - offset(d, i) * (targetsNum / 2 - index);
-          }
-          else
-          {
-            return scale(d.x) - offset * (targetsNum / 2 - index);
-          }
-        }
+          return scale(d.x) - (c3.chart.internal.fn.isFunction(offset) ? offset(d, i): offset) * (targetsNum / 2 - index);
         else
-        {
           return 0;
-        }
     };
 };
 c3.chart.internal.fn.generateGetBarPoints = function (barIndices, isSub) {

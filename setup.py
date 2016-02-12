@@ -15,8 +15,8 @@ setup(
     long_description=open('README.rst').read(),
     download_url="https://github.com/wfp-ose/geosite-framework-django/zipball/master",
     packages=[
-        "sparc2",
-        "sparc2.tests"],
+        "geosite",
+        "geosite.tests"],
     classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
