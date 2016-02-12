@@ -77,9 +77,9 @@
     {% else %}
     <script src="{{ STATIC_URL }}/build/js/main.min.js?v={{ SPARC_STATIC_VERSION }}"></script>
     {% endif %}
-    {% include "_includes/snippet_const.html" %}
-    {% include "_includes/snippet_initial_values.html" %}
-    {% include "_includes/snippet_utility.html" %}
+    {% block head_inline %}
+    {% include "geosite/_includes/snippet_const.html" %}
+    {% endblock %}
     {% block extra_head %}{% endblock %}
     {% block init %}
     <script type="text/javascript" language="Javascript">

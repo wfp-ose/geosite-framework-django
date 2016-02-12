@@ -1,1 +1,1 @@
-default_app_config = 'gauldjango.apps.GeositeDjangoConfig'
+default_app_config = 'geosite.apps.GeositeDjangoConfig'

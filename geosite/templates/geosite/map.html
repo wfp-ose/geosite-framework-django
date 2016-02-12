@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% load geosite2_tags %}
+{% extends "geosite/base.html" %}
+{% load geosite_tags %}
 {% block extra_head %}
 <script>
   var map_config = {{ map_config_json|safe }};
@@ -16,7 +16,7 @@
 
 {% block content %}
 <div class="container-fluid">
-    {%block header %}{% endheader %}
+    {%block header %}{% endblock %}
     <div
       id="geosite-main"
       class="row geosite-row geosite-main geosite-controller"

@@ -120,21 +120,21 @@
     {% for key, layer in map_config.featurelayers.items|sortItemsByList:map_config.legendlayers %}
     {% with idx=forloop.counter0|stringformat:"i" %}
     {% with id="geosite-layer-more-featurelayer-"|add:idx %}
-    {% include "_includes/modals/modal_layer_more.html" with id=id layer=layer %}
+    {% include "geosite/_includes/modals/modal_layer_more.html" with id=id layer=layer %}
     {% endwith %}
     {% endwith %}
     {% endfor %}
     {% for layer in map_config.baselayers %}
     {% with idx=forloop.counter0|stringformat:"i" %}
     {% with id="geosite-layer-more-baselayer-"|add:idx %}
-    {% include "_includes/modals/modal_layer_more.html" with id=id layer=layer %}
+    {% include "geosite/_includes/modals/modal_layer_more.html" with id=id layer=layer %}
     {% endwith %}
     {% endwith %}
     {% endfor %}
     {% for key, layer in map_config.featurelayers.items|sortItemsByList:map_config.legendlayers %}
     {% with idx=forloop.counter0|stringformat:"i" %}
     {% with id="geosite-layer-legend-featurelayer-"|add:idx %}
-    {% include "_includes/modals/modal_layer_legend.html" with id=id layer=layer %}
+    {% include "geosite/_includes/modals/modal_layer_legend.html" with id=id layer=layer %}
     {% endwith %}
     {% endwith %}
     {% endfor %}
