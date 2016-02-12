@@ -19,3 +19,4 @@ django-leaflet
 django-autocomplete-light==2.3.3
 bleach
 markdown
+unidecode

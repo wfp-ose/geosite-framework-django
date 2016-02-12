@@ -12,6 +12,6 @@ notifications:
         - pjdufour.dev@gmail.com
 
 before_script:
-    flake8 sparc2
+    flake8 geosite
 
 script: python -m unittest geosite.tests.test
