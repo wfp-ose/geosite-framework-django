@@ -3,4 +3,4 @@ MONTHS_LONG = ["January", "February", "March", "April", "May", "June", "July", "
 MONTHS_SHORT3 = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]  # noqa
 MONTHS_ALL = [{'num': i+1, 'long': MONTHS_LONG[i], 'short3': MONTHS_SHORT3[i]} for i in MONTHS_NUM]  # noqa
 
-DAYSOFTHEWEEK = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']  # noqa
+DAYSOFTHEWEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']  # noqa

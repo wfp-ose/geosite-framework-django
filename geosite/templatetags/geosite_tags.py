@@ -12,13 +12,16 @@ from django.template.loader import get_template
 
 register = template.Library()
 
+
 @register.filter(name='formatLabel')
 def formatLabel(value, arg):
     return value.format(value=arg)
 
+
 @register.filter(name='as_json')
 def as_json(value):
     return json.dumps(value)
+
 
 @register.filter(name='md2html')
 def md2html(value):
@@ -29,12 +32,14 @@ def md2html(value):
     print "Out: ", md
     return md
 
+
 @register.filter(name="template2string")
 def template2string(value):
     t =  get_template(value);
     text = t.render({})
-    text = text.replace("\r\n","").replace("\n","").replace("\"","\\\"")  # .replace("\"","&quot;")
+    text = text.replace("\r\n", "").replace("\n", "").replace("\"", "\\\"")
     return text
+
 
 @register.filter(name="sortItemsByList")
 def sortItemsByList(value, arg):
@@ -45,6 +50,7 @@ def sortItemsByList(value, arg):
     else:
         return value
 
+
 @register.filter(name="sortListByList")
 def sortListByList(value, arg):
     if arg:
@@ -52,6 +58,7 @@ def sortListByList(value, arg):
         return s
     else:
         return value
+
 
 @register.filter(name="legendGraphic")
 def legendGraphic(value, arg=None):
@@ -71,13 +78,16 @@ def legendGraphic(value, arg=None):
     print url
     return url
 
+
 @register.filter(name="as_float")
 def as_float(value):
     return value * 1.0;
 
+
 @register.filter(name="addFloat")
 def addFloat(value, arg):
     return value + arg;
+
 
 @register.filter(name="subtract")
 def subtract(value, arg):
