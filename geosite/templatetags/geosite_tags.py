@@ -28,14 +28,14 @@ def md2html(value):
     print "Initial", value
     md = markdown.markdown(value).strip()[len("<p>"):-1*len("</p>")]
     md = bleach.clean(md)
-    md = re.sub(r"(<a .*)>(.*?)</a>", r'\1 target="_blank">\2</a>', md, flags=re.M|re.I)
+    md = re.sub(r"(<a .*)>(.*?)</a>", r'\1 target="_blank">\2</a>', md, flags=(re.M | re.I))
     print "Out: ", md
     return md
 
 
 @register.filter(name="template2string")
 def template2string(value):
-    t =  get_template(value);
+    t = get_template(value)
     text = t.render({})
     text = text.replace("\r\n", "").replace("\n", "").replace("\"", "\\\"")
     return text
@@ -81,12 +81,12 @@ def legendGraphic(value, arg=None):
 
 @register.filter(name="as_float")
 def as_float(value):
-    return value * 1.0;
+    return value * 1.0
 
 
 @register.filter(name="addFloat")
 def addFloat(value, arg):
-    return value + arg;
+    return value + arg
 
 
 @register.filter(name="subtract")
