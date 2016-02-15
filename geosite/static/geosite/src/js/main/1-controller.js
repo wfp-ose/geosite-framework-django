@@ -13,12 +13,12 @@ geosite.init_intents = function(element, scope)
       if(that.hasClass('geosite-off'))
       {
         that.removeClass('geosite-off');
-        intend(that.data('intent-names')[0], that.data('intent-data'), scope);
+        geosite.intend(that.data('intent-names')[0], that.data('intent-data'), scope);
       }
       else
       {
         that.addClass('geosite-off');
-        intend(that.data('intent-names')[1], that.data('intent-data'), scope);
+        geosite.intend(that.data('intent-names')[1], that.data('intent-data'), scope);
       }
     }
     else if(that.hasClass('geosite-radio'))
@@ -38,12 +38,12 @@ geosite.init_intents = function(element, scope)
           that.removeClass(that.data("intent-class-off"));
           siblings.addClass(that.data("intent-class-off"));
         }
-        intend(that.data('intent-name'), that.data('intent-data'), scope);
+        geosite.intend(that.data('intent-name'), that.data('intent-data'), scope);
       }
     }
     else
     {
-      intend(that.data('intent-name'), that.data('intent-data'), scope);
+      geosite.intend(that.data('intent-name'), that.data('intent-data'), scope);
     }
   });
 };
@@ -57,9 +57,9 @@ geosite.controller_base = function($scope, $element) {
 
 };
 
-geosite.init_controller_base = function(that, app)
+geosite.init_controller_base = function(app)
 {
-  app.controller_base("GeositeControllerBase", geosite.controller_base);
+  app.controller("GeositeControllerBase", geosite.controller_base);
 };
 
 geosite.init_controller = function(that, app, controller)
@@ -67,7 +67,7 @@ geosite.init_controller = function(that, app, controller)
   var controllerName = that.data('controllerName');
   var controllerType = that.data('controllerType');
 
-  app.controller_base(controllerName, controller || geosite.controller_base);
+  app.controller(controllerName, controller || geosite.controller_base);
 };
 
 geosite.init_controllers = function(that, app, controllers)

@@ -5,3 +5,4 @@ include setup.cfg
 global-exclude *.pyc
 global-exclude *.pyo
 recursive-include geosite/static *
+recursive-include geosite/templates *
