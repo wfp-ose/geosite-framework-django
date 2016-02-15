@@ -60,3 +60,16 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# SPARC 2.x
+supervisord.pid
+supervisord.log
+geosite/local_settings.py
+geosite/static/node_modules
+geosite/static/geosite/node_modules
+geosite/static/temp
+geosite/static/geosite/temp
+geosite/migrations
+*.DS_Store
+output.txt
+node_modules
