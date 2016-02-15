@@ -63,20 +63,23 @@ def sortListByList(value, arg):
 @register.filter(name="legendGraphic")
 def legendGraphic(value, arg=None):
     layer = value
-    params = {
-        "REQUEST": "GetLegendGraphic",
-        "VERSION": layer["wms"]["version"] or "1.1.1",
-        "FORMAT": layer["wms"]["format"] or "image/png",
-        "WIDTH": layer["legend"]["symbol"]["width"] or 20,
-        "HEIGHT": layer["legend"]["symbol"]["height"] or 20,
-        "LAYER": layer["wms"]["layers"][arg] if arg and arg >= 0 else layer["wms"]["layers"][0]
-    }
-    if layer["wms"]["styles"] and arg >= 0:
-        params["STYLE"] = layer["wms"]["styles"][arg]
-    qs = "&".join(['%s=%s' % (k, v) for (k, v) in params.items()])
-    url = layer["wms"]["url"]+"?"+qs
-    print url
-    return url
+    if layer["legend"]["symbol"]["url"]:
+        return layer["legend"]["symbol"]["url"]
+    else:
+        params = {
+            "REQUEST": "GetLegendGraphic",
+            "VERSION": layer["wms"]["version"] or "1.1.1",
+            "FORMAT": layer["wms"]["format"] or "image/png",
+            "WIDTH": layer["legend"]["symbol"]["width"] or 20,
+            "HEIGHT": layer["legend"]["symbol"]["height"] or 20,
+            "LAYER": layer["wms"]["layers"][arg] if arg and arg >= 0 else layer["wms"]["layers"][0]
+        }
+        if layer["wms"]["styles"] and arg >= 0:
+            params["STYLE"] = layer["wms"]["styles"][arg]
+        qs = "&".join(['%s=%s' % (k, v) for (k, v) in params.items()])
+        url = layer["wms"]["url"]+"?"+qs
+        print url
+        return url
 
 
 @register.filter(name="as_float")
