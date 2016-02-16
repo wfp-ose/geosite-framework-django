@@ -63,7 +63,7 @@ def sortListByList(value, arg):
 @register.filter(name="legendGraphic")
 def legendGraphic(value, arg=None):
     layer = value
-    if layer["legend"]["symbol"]["url"]:
+    if layer["legend"]["symbol"].get("url", None):
         return layer["legend"]["symbol"]["url"]
     else:
         params = {
