@@ -9,13 +9,13 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+/build/  # To allow static library builds
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/  # To allow static lib directories
 lib64/
 parts/
 sdist/
