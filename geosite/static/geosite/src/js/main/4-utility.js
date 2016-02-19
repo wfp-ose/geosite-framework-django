@@ -30,9 +30,37 @@ var getHashValue = function(keys, type)
         {
           value = (value != undefined && value != null && value != "") ? parseInt(value, 10) : undefined;
         }
+        else if(type == "integerarray")
+        {
+          if(value != undefined)
+          {
+            var sValue = value.split(",");
+            var newValue = [];
+            for(var i = 0; i < sValue.length; i++)
+            {
+              var v = sValue[i];
+              newValue.push((v != undefined && v != null && v != "") ? parseInt(v, 10) : undefined);
+            }
+            value = newValue;
+          }
+        }
         else if(type == "float")
         {
           value = (value != undefined && value != null && value != "") ? parseFloat(value) : undefined;
+        }
+        else if(type == "floatarray")
+        {
+          if(value !=undefined)
+          {
+            var sValue = value.split(",");
+            var newValue = [];
+            for(var i = 0; i < sValue.length; i++)
+            {
+              var v = sValue[i];
+              newValue.push((v != undefined && v != null && v != "") ? parseFloat(v) : undefined);
+            }
+            value = newValue;
+          }
         }
     }
     return value;
@@ -45,6 +73,10 @@ var hasHashValue = function(keys)
 var getHashValueAsInteger = function(keys)
 {
   return getHashValue(keys, "integer");
+};
+var getHashValueAsIntegerArray = function(keys)
+{
+  return getHashValue(keys, "integerarray");
 };
 var getHashValueAsFloat = function(keys)
 {
