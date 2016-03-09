@@ -1,9 +1,17 @@
 {% extends "geosite/base.html" %}
 {% load geosite_tags %}
 {% block extra_head %}
-<script>
-  var map_config = {{ map_config_json|safe }};
-</script>
+  {% block map_config %}
+  <script>
+    geosite.map_config = {{ map_config_json|safe }};
+  </script>
+  {% endblock %}
+  {% block initial_state %}
+  <script>
+    geosite.initial_state = {{ state_json|safe }};
+    geosite.state_schema = {{ state_schema_json|safe }};
+  </script>
+  {% endblock %}
 {% endblock %}
 
 {% block init %}
@@ -16,7 +24,7 @@
 
 {% block content %}
 <div class="container-fluid">
-    {%block header %}{% endblock %}
+    {% block header %}{% endblock %}
     <div
       id="geosite-main"
       class="row geosite-row geosite-main geosite-controller"

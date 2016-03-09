@@ -1,11 +1,11 @@
 {% extends "geosite/base.html" %}
 {% block content %}
 <div class="container-fluid">
-  {% include "_includes/header.html" %}
+  {% block header %}{% endblock %}
   <div class="row" style="">
     {% block content_middle %}{% endblock %}
   </div>
-  {% block footer %}<div class="footer">{% include "_includes/footer.html" %}</div>{% endblock %}
+  {% block footer %}{% endblock %}
 </div>
 {% block extra_content %}{% endblock %}
 {% endblock %}

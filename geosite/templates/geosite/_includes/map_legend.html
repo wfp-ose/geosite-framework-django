@@ -17,28 +17,32 @@
       {% for key, layer in map_config.featurelayers.items|sortItemsByList:map_config.legendlayers %}
       {% if layer.legend %}
       <div class="geosite-map-legend-item noselect">
-        <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
-          <a data-toggle="modal" data-target="#geosite-layer-more-featurelayer-{{ forloop.counter0 }}">
-            <i class="fa fa-info-circle"></i>
-          </a>
-        </div><!--
-        --><div class="geosite-map-legend-item-icon geosite-map-legend-item-visibility">
+        <div class="geosite-map-legend-item-left">
+          <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
+            <a data-toggle="modal" data-target="#geosite-layer-more-featurelayer-{{ forloop.counter0 }}">
+              <i class="fa fa-info-circle"></i>
+            </a>
+          </div><!--
+          --><div class="geosite-map-legend-item-icon geosite-map-legend-item-visibility">
              <a
                class="geosite-map-legend-item-visibility-button geosite-intent geosite-toggle"
                data-intent-names="[&quot;showLayer&quot;,&quot;hideLayer&quot;]"
                data-intent-data="{&quot;layer&quot;:&quot;{{ key }}&quot;}">
                <i class="fa fa-eye geosite-on"></i><i class="fa fa-eye-slash geosite-off"></i>
              </a>
-           </div><!--
-       --><div class="geosite-map-legend-item-icon geosite-map-legend-item-zoomto{% if layer.type != "geojson" %} fade disabled{% endif %}">
+         </div><!--
+         --><div class="geosite-map-legend-item-icon geosite-map-legend-item-zoomto{% if layer.type != "geojson" %} fade disabled{% endif %}">
             <a
               class="geosite-map-legend-item-zoomto-button geosite-intent"
               data-intent-name="zoomToLayer"
               data-intent-data="{&quot;layer&quot;:&quot;{{ key }}&quot;}">
               <i class="fa fa-compress"></i>
             </a>
-          </div><!--
-        --><div class="geosite-map-legend-item-symbol">
+          </div>
+        </div><!--
+        --><div class="geosite-map-legend-item-right">
+          {% if layer.legend.symbol %}
+          <div class="geosite-map-legend-item-symbol">
           {% if layer.legend.symbol.type == "circle" %}
           <svg width="100%" height="100%" version="1.0" xmlns="http://www.w3.org/2000/svg">
             <circle
@@ -73,15 +77,14 @@
           {% elif layer.legend.symbol.type == "graphic" %}
           <a data-toggle="modal" data-target="#geosite-layer-legend-featurelayer-{{ forloop.counter0 }}">
             {% if layer.legend.symbol.preview %}
-            <img src="{{ layer|legendGraphic }}"/>
+            <img src="{{ layer|legendGraphic }}" />
             {% else %}
             <i class="fa fa-image" style="color:black; font-size: 20px;"></i>
             {% endif %}
           </a>
           {% endif %}
-        </div><!--
-        --><div class="geosite-map-legend-item-label">
-          <span>{{ layer.legend.label }}</span>
+          </div><!--
+          -->{% endif %}<div class="geosite-map-legend-item-label"><span>{{ layer.legend.label }}</span></div>
         </div>
       </div>
       {% endif %}
@@ -92,24 +95,28 @@
       {% for layer in map_config.baselayers %}
       {% if layer.legend %}
       <div class="geosite-map-legend-item noselect">
-        <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
-          <a data-toggle="modal" data-target="#geosite-layer-more-baselayer-{{ forloop.counter0 }}">
-            <i class="fa fa-info-circle"></i>
-          </a>
+        <div class="geosite-map-legend-item-left">
+          <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
+            <a data-toggle="modal" data-target="#geosite-layer-more-baselayer-{{ forloop.counter0 }}">
+              <i class="fa fa-info-circle"></i>
+            </a>
+          </div><!--
+          --><div class="geosite-map-legend-item-icon geosite-map-legend-item-visibility">
+               <a
+                 class="geosite-map-legend-item-visibility-button geosite-intent geosite-radio{% if forloop.counter0 == 0 %} geosite-on{% endif %}"
+                 data-intent-name="switchBaseLayer"
+                 data-intent-data="{&quot;layer&quot;:&quot;{{ layer.id }}&quot;}"
+                 data-intent-class-on="geosite-on"
+                 data-intent-class-off="">
+                 <i class="fa fa-eye geosite-on"></i><i class="fa fa-eye-slash geosite-off"></i>
+               </a>
+             </div><!--
+          --><div class="geosite-map-legend-item-symbol" style="width: 10px;"></div>
         </div><!--
-        --><div class="geosite-map-legend-item-icon geosite-map-legend-item-visibility">
-             <a
-               class="geosite-map-legend-item-visibility-button geosite-intent geosite-radio{% if forloop.counter0 == 0 %} geosite-on{% endif %}"
-               data-intent-name="switchBaseLayer"
-               data-intent-data="{&quot;layer&quot;:&quot;{{ layer.id }}&quot;}"
-               data-intent-class-on="geosite-on"
-               data-intent-class-off="">
-               <i class="fa fa-eye geosite-on"></i><i class="fa fa-eye-slash geosite-off"></i>
-             </a>
-           </div><!--
-        --><div class="geosite-map-legend-item-symbol" style="width: 10px;"></div><!--
-        --><div class="geosite-map-legend-item-label" style="width:calc(100% - 71px);">
-          <span>{{ layer.legend.label }}</span>
+        --><div class="geosite-map-legend-item-right">
+          <div class="geosite-map-legend-item-label" style="width: 100%;">
+            <span>{{ layer.legend.label }}</span>
+          </div>
         </div>
       </div>
       {% endif %}

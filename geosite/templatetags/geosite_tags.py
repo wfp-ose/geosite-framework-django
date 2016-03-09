@@ -43,7 +43,7 @@ def template2string(value):
 
 @register.filter(name="sortItemsByList")
 def sortItemsByList(value, arg):
-    if arg:
+    if value and arg:
         layers = [layer for layer in value if layer[0] in arg]
         s = sorted(layers, key=lambda x: arg.index(x[0]))
         return s
