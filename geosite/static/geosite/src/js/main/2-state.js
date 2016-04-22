@@ -28,5 +28,19 @@ geosite.init_state = function(state, stateschema)
     });
   }
 
+  // Update Filters
+  if(newState["styles"] != undefined)
+  {
+    /*
+    $.each(newState["styles"], function(layer_id, layer_style){
+      var type = stateschema["filters"][layer_id][filter_id].toLowerCase();
+      var value = getHashValue("style:"+layer_id, type);
+      if(value != undefined && value != "")
+      {
+        newState["filters"][layer_id][filter_id] = value;
+      }
+    });*/
+  }
+
   return newState;
 };

@@ -31,7 +31,7 @@
       ng-controller="geosite-main"
       data-controller-name="geosite-main"
       data-controller-type="geosite-main">
-      {% include "geosite/_includes/sidebar.html" %}
+      {% block sidebar_left %}{% endblock %}
       <div
         id="geosite-map"
         class="row geosite-row geosite-map geosite-controller"
@@ -50,6 +50,7 @@
           data-controller-type="geosite-map-map">
         </div>
       </div>
+      {% block sidebar_right %}{% endblock %}
     </div>
     {% block footer %}{% endblock %}
 </div>

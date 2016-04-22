@@ -1,6 +1,12 @@
 {% block title %}
 title: Map
 {% endblock %}
+{% block description %}
+description: ""
+{% endblock %}
+{% block slug %}
+slug: ""
+{% endblock %}
 {% block view %}
 view:
   latitude: 0

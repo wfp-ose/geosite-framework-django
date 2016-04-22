@@ -19,10 +19,7 @@
       <div class="geosite-map-legend-item noselect" data-layer="{{ key }}">
         <div class="geosite-map-legend-item-left">
           <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
-            <a
-              class="geosite-intent"
-              data-intent-name="toggleModal"
-              data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-more&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;featurelayers&quot;,&quot;{{ key }}&quot;]}}">
+            <a data-toggle="modal" data-target="#geosite-layer-more-featurelayer-{{ forloop.counter0 }}">
               <i class="fa fa-info-circle"></i>
             </a>
           </div><!--
@@ -46,10 +43,7 @@
         --><div class="geosite-map-legend-item-right">
           {% if layer.cartography.0.legend.symbol %}
           <div class="geosite-map-legend-item-symbol">
-            <a
-              class="geosite-intent"
-              data-intent-name="toggleModal"
-              data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-carto&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;featurelayers&quot;,&quot;{{ key }}&quot;]}}">
+            <a data-toggle="modal" data-target="#geosite-layer-legend-featurelayer-{{ forloop.counter0 }}">
             {% if layer.cartography.0.legend.symbol.type == "circle" %}
             <svg width="100%" height="100%" version="1.0" xmlns="http://www.w3.org/2000/svg">
               <circle
@@ -98,13 +92,10 @@
     <div class="geosite-map-legend-baselayers geosite-radio-group">
       {% for layer in map_config.baselayers %}
       {% if layer.legend %}
-      <div class="geosite-map-legend-item noselect" data-layer="{{ layer.id }}">
+      <div class="geosite-map-legend-item noselect">
         <div class="geosite-map-legend-item-left">
           <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
-            <a
-              class="geosite-intent"
-              data-intent-name="toggleModal"
-              data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-more&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;baselayers&quot;,&quot;{{ forloop.counter0 }}&quot;]}}">
+            <a data-toggle="modal" data-target="#geosite-layer-more-baselayer-{{ forloop.counter0 }}">
               <i class="fa fa-info-circle"></i>
             </a>
           </div><!--
@@ -130,32 +121,27 @@
       {% endfor %}
     </div>
   </div>
-  <div class="geosite-legend-modals">
-    <div
-      id="geosite-modal-layer-more"
-      class="geosite-controller geosite-controller-modal modal fade geosite-layer-more"
-      ng-controller="geosite-modal-layer-more"
-      data-controller-name="geosite-modal-layer-more"
-      data-controller-type="geosite-modal-layer-more"
-      style="z-index:-1;color:black;"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-      style="display: block;">
-      <div geosite-modal-layer-more id="geosite-layer-more"></div>
-    </div>
-    <div
-      id="geosite-modal-layer-carto"
-      class="geosite-controller geosite-controller-modal modal fade geosite-layer-carto"
-      ng-controller="geosite-modal-layer-carto"
-      data-controller-name="geosite-modal-layer-carto"
-      data-controller-type="geosite-modal-layer-carto"
-      style="z-index:-1;color:black;"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-      style="display: block;">
-      <div geosite-modal-layer-carto id="geosite-layer-carto"></div>
-    </div>
+  <div id="geosite-legend-modals" class="geosite-legend-modals">
+    {% for key, layer in map_config.featurelayers.items|sortItemsByList:map_config.legendlayers %}
+    {% with idx=forloop.counter0|stringformat:"i" %}
+    {% with id="geosite-layer-more-featurelayer-"|add:idx %}
+    {% include "geosite/_includes/modals/modal_layer_more_ng.html" with id=id layer=layer %}
+    {% endwith %}
+    {% endwith %}
+    {% endfor %}
+    {% for layer in map_config.baselayers %}
+    {% with idx=forloop.counter0|stringformat:"i" %}
+    {% with id="geosite-layer-more-baselayer-"|add:idx %}
+    {% include "geosite/_includes/modals/modal_layer_more_ng.html" with id=id layer=layer %}
+    {% endwith %}
+    {% endwith %}
+    {% endfor %}
+    {% for key, layer in map_config.featurelayers.items|sortItemsByList:map_config.legendlayers %}
+    {% with idx=forloop.counter0|stringformat:"i" %}
+    {% with id="geosite-layer-legend-featurelayer-"|add:idx %}
+    {% include "geosite/_includes/modals/modal_layer_carto.html" with id=id layer=layer %}
+    {% endwith %}
+    {% endwith %}
+    {% endfor %}
   </div>
 </div>

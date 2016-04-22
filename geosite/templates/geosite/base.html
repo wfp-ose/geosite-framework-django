@@ -51,9 +51,11 @@
     {% if GEOSITE_STATIC_DEBUG.angular %}
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular-sanitize.js"></script>
     {% else %}
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular-sanitize.min.js"></script>
     {% endif %}
     {% if GEOSITE_STATIC_DEBUG.bootstrap %}
     <script src="{{ STATIC_URL}}geosite/lib/bootstrap/3.3.5/dist/js/bootstrap.js"></script>

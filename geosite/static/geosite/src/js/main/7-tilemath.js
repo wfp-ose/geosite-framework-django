@@ -15,7 +15,7 @@ geosite.tilemath.point_to_bbox = function(x, y, z, digits)
 
 geosite.tilemath.point_to_radius = function(z)
 {
-  return 4.0 / z;
+  return (geosite.config.click_radius || 4.0) / z;
 };
 
 geosite.tilemath.tms_to_bbox = function(x, y, z)

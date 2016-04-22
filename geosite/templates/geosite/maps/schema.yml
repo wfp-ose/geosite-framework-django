@@ -1,0 +1,79 @@
+{% block title %}
+title:
+  type: text
+  label: Title
+  placeholder: Title
+  required: true
+{% endblock %}
+{% block description %}
+description:
+  type: text
+  label: Description
+  placeholder: Description
+  multiline: true
+  required: true
+{% endblock %}
+{% block slug %}
+slug:
+  type: text
+  label: Slug
+  placeholder: Slug
+  required: true
+{% endblock %}
+{% block view %}
+view:
+  latitude:
+    order: 0
+    type: int
+    label: Latitude
+    placeholder: Latitude
+  longitude:
+    order: 1
+    type: int
+    label: Longitude
+    placeholder: Longitude
+  zoom:
+    order: 2
+    type: int
+    label: Zoom
+    placeholder: Zoom
+    minValue: 0
+    maxValue: 18
+  minZoom:
+    order: 3
+    type: int
+    label: Minimum Zoom
+    placeholder: Minimum Zoom
+    minValue: 0
+    maxValue: 18
+  maxZoom:
+    order: 4
+    type: int
+    label: Maximum Zoom
+    placeholder: Maximum Zoom
+    minValue: 0
+    maxValue: 18
+{% endblock %}
+{% block controls %}
+controls:
+  calendar:
+    order: 0
+    type: boolean
+    label: Calendar
+  filters:
+    order: 1
+    type: boolean
+    label: Filters
+  legend:
+    order: 2
+    type: boolean
+    label: Legend
+  sidebar:
+    order: 3
+    type: boolean
+    label: Sidebar
+  zoom:
+    order: 4
+    type: boolean
+    label: Zoom
+{% endblock %}

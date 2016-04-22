@@ -9,14 +9,32 @@ geosite.codec.parseFeatures = function(response, fields_by_featuretype)
       var f = $(this).children();
       var typeName = f.prop("tagName").toLowerCase();
       var attributes = geosite.codec.parseAttributes(f, fields_by_featuretype[typeName]);
-      var coords = f.find("geonode\\:shape").find("gml\\:point").find("gml\\:coordinates").text().split(",");
-      var geom = new L.LatLng(parseFloat(coords[1]), parseFloat(coords[0]));
-
+      var shape = f.find("geonode\\:shape");
+      var geom = undefined;
+      if(shape.find("gml\\:point").length > 0)
+      {
+        var coords = shape.find("gml\\:point").find("gml\\:coordinates").text().split(",");
+        geom = new L.LatLng(parseFloat(coords[1]), parseFloat(coords[0]));
+      }
+      else if(shape.find("gml\\:multilinestring").length > 0)
+      {
+        var coords = shape.find("gml\\:multilinestring")
+          .find("gml\\:linestringmember")
+          .find("gml\\:linestring")
+          .find("gml\\:coordinates")
+          .text().split(" ");
+        coords = $.map(coords, function(x, i){
+          var a = x.split(",");
+          return [[parseFloat(a[0]), parseFloat(a[1])]];
+        });
+        var geojson = [{"type": "LineString","coordinates": coords}];
+        geom = new L.GeoJSON(geojson, {});
+      }
       var newFeature = {
         'featuretype': typeName,
         'attributes': attributes,
-        'geometry': geom};
-
+        'geometry': geom
+      };
       features.push(newFeature);
   });
   return features;

@@ -13,6 +13,18 @@ from django.template.loader import get_template
 register = template.Library()
 
 
+@register.filter(name='tabLabel')
+def tabLabel(value):
+    if len(value.split(' ')) == 2:
+        return value.replace(' ', '<br>')
+    else:
+        return value
+
+@register.filter(name='isVisible')
+def isVisible(value):
+    return value.get('visible', True)
+
+
 @register.filter(name='formatLabel')
 def formatLabel(value, arg):
     return value.format(value=arg)
@@ -50,6 +62,15 @@ def sortItemsByList(value, arg):
     else:
         return value
 
+@register.filter(name="sortItemsBySchema")
+def sortItemsBySchema(value, arg):
+    if value and arg:
+        print value
+        print arg
+        return sorted(value, key=lambda x: arg[x[0]].get('order', 0))
+    else:
+        return value
+
 
 @register.filter(name="sortListByList")
 def sortListByList(value, arg):
@@ -63,15 +84,16 @@ def sortListByList(value, arg):
 @register.filter(name="legendGraphic")
 def legendGraphic(value, arg=None):
     layer = value
-    if layer["legend"]["symbol"].get("url", None):
+    symbol = layer["cartography"][0]["legend"]["symbol"]
+    if symbol.get("url", None):
         return layer["legend"]["symbol"]["url"]
     else:
         params = {
             "REQUEST": "GetLegendGraphic",
             "VERSION": layer["wms"]["version"] or "1.1.1",
             "FORMAT": layer["wms"]["format"] or "image/png",
-            "WIDTH": layer["legend"]["symbol"]["width"] or 20,
-            "HEIGHT": layer["legend"]["symbol"]["height"] or 20,
+            "WIDTH": symbol["width"] or 20,
+            "HEIGHT": symbol["height"] or 20,
             "LAYER": layer["wms"]["layers"][arg] if arg and arg >= 0 else layer["wms"]["layers"][0]
         }
         if layer["wms"]["styles"] and arg >= 0:
@@ -105,3 +127,11 @@ def divide(value, arg):
 @register.filter(name="percent")
 def percent(value, arg):
     return 100.0 * value / arg
+
+@register.filter(name="lookup")
+def lookup(d, key):
+    return d[key]
+
+@register.filter(name="geosite_field_id")
+def geosite_field_id(value):
+    return value.lower().replace(".","-").replace(" ","-")

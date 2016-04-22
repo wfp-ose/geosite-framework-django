@@ -48,18 +48,25 @@ geosite.init_intents = function(element, scope)
   });
 };
 
+geosite.controllers = {};
 
-geosite.controller_base = function($scope, $element) {
+geosite.controllers.controller_base = function($scope, $element) {
 
   this.intend = geosite.intend;
 
   geosite.init_intents($($element), $scope);
 
+  $scope.toggleModal = function(selector) {
+
+    $(selector).modal('toggle');
+
+  };
+
 };
 
 geosite.init_controller_base = function(app)
 {
-  app.controller("GeositeControllerBase", geosite.controller_base);
+  app.controller("GeositeControllerBase", geosite.controllers.controller_base);
 };
 
 geosite.init_controller = function(that, app, controller)
@@ -67,7 +74,7 @@ geosite.init_controller = function(that, app, controller)
   var controllerName = that.data('controllerName');
   var controllerType = that.data('controllerType');
 
-  app.controller(controllerName, controller || geosite.controller_base);
+  app.controller(controllerName, controller || geosite.controllers.controller_base);
 };
 
 geosite.init_controllers = function(that, app, controllers)

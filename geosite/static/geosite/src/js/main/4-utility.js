@@ -103,3 +103,21 @@ var layersAsArray = function(layers)
 {
   return $.map(layers, function(layer, id){return {'id':id, 'layer':layer};});
 };
+var extract = function(keyChain, node)
+{
+	var obj = undefined;
+	if(keyChain.length==0)
+	{
+		obj = node;
+	}
+	else
+	{
+		if(node!=undefined)
+		{
+			var newKeyChain = keyChain.slice(1);
+			var newNode = node[""+keyChain[0]];
+			obj = extract(newKeyChain, newNode);
+		}
+	}
+	return obj;
+};

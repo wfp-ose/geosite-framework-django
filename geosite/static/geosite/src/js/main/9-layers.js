@@ -24,12 +24,15 @@ geosite.layers.init_baselayers = function(map, baselayers)
   }
   return layers;
 };
-geosite.layers.init_featurelayer_post = function($scope, live, id, fl)
+geosite.layers.init_featurelayer_post = function($scope, live, id, fl, visible)
 {
   if(fl != undefined)
   {
-    fl.addTo(live["map"]);
-    geosite.intend("layerLoaded", {'type':'featurelayer', 'layer': id}, $scope);
+    if(visible != undefined ? visible : true)
+    {
+      fl.addTo(live["map"]);
+    }
+    geosite.intend("layerLoaded", {'type':'featurelayer', 'layer': id, 'visible': visible}, $scope);
   }
   else
   {
@@ -51,7 +54,7 @@ geosite.layers.init_featurelayer_wms = function($scope, live, map_config, id, la
     attribution: layerConfig.source.attribution
   });
   live["featurelayers"][id] = fl;
-  geosite.layers.init_featurelayer_post($scope, live, id, fl);
+  geosite.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
 };
 geosite.layers.init_featurelayer_geojson = function($scope, live, map_config, id, layerConfig)
 {
@@ -63,7 +66,7 @@ geosite.layers.init_featurelayer_geojson = function($scope, live, map_config, id
         attribution: layerConfig.source.attribution
       });
       live["featurelayers"][id] = fl;
-      geosite.layers.init_featurelayer_post($scope, live, id, fl);
+      geosite.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
     }
   });
 };

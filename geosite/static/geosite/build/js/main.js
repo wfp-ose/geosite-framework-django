@@ -98,18 +98,25 @@ geosite.init_intents = function(element, scope)
   });
 };
 
+geosite.controllers = {};
 
-geosite.controller_base = function($scope, $element) {
+geosite.controllers.controller_base = function($scope, $element) {
 
   this.intend = geosite.intend;
 
   geosite.init_intents($($element), $scope);
 
+  $scope.toggleModal = function(selector) {
+
+    $(selector).modal('toggle');
+
+  };
+
 };
 
 geosite.init_controller_base = function(app)
 {
-  app.controller("GeositeControllerBase", geosite.controller_base);
+  app.controller("GeositeControllerBase", geosite.controllers.controller_base);
 };
 
 geosite.init_controller = function(that, app, controller)
@@ -117,7 +124,7 @@ geosite.init_controller = function(that, app, controller)
   var controllerName = that.data('controllerName');
   var controllerType = that.data('controllerType');
 
-  app.controller(controllerName, controller || geosite.controller_base);
+  app.controller(controllerName, controller || geosite.controllers.controller_base);
 };
 
 geosite.init_controllers = function(that, app, controllers)
@@ -136,6 +143,194 @@ geosite.init_controllers = function(that, app, controllers)
         }
     });
   }
+};
+
+geosite.vecmath = {};
+
+geosite.vecmath.distance = function(a, b)
+{
+  var p = L.Projection.SphericalMercator;
+  if(b.toString != undefined && b.toString().startsWith('LatLng'))
+  {
+    return (p.project(a)).distanceTo(p.project(b));
+  }
+  else
+  {
+    var minDistance = undefined;
+    $.each(b._layers, function(id, layer)
+    {
+      var verticies = layer._latlngs;
+      var i = 0;
+      if(minDistance == undefined)
+      {
+        minDistance = L.LineUtil.pointToSegmentDistance(
+          p.project(a),
+          p.project(verticies[i]),
+          p.project(verticies[i+1]));
+        i++;
+      }
+      for(; i < verticies.length -1; i++)
+      {
+        var d = L.LineUtil.pointToSegmentDistance(
+          p.project(a),
+          p.project(verticies[i]),
+          p.project(verticies[i+1]));
+        if(d < minDistance)
+        {
+          minDistance = d;
+        }
+      }
+    });
+    return minDistance;
+  }
+};
+
+geosite.vecmath.closestLocation = function(a, b)
+{
+  if(b.toString != undefined && b.toString().startsWith('LatLng'))
+  {
+    return b;
+  }
+  else
+  {
+    var p = L.Projection.SphericalMercator;
+    var minDistance = undefined;
+    var closestPoint = undefined;
+    $.each(b._layers, function(id, layer)
+    {
+      var verticies = layer._latlngs;
+      var i = 0;
+      if(minDistance == undefined)
+      {
+        minDistance = L.LineUtil.pointToSegmentDistance(
+          p.project(a),
+          p.project(verticies[i]),
+          p.project(verticies[i+1]));
+        closestPoint = L.LineUtil.closestPointOnSegment(
+          p.project(a),
+          p.project(verticies[i]),
+          p.project(verticies[i+1]));
+        i++;
+      }
+      for(; i < verticies.length -1; i++)
+      {
+        var d = L.LineUtil.pointToSegmentDistance(
+          p.project(a),
+          p.project(verticies[i]),
+          p.project(verticies[i+1]));
+        if(d < minDistance)
+        {
+          minDistance = d;
+          closestPoint = L.LineUtil.closestPointOnSegment(
+            p.project(a),
+            p.project(verticies[i]),
+            p.project(verticies[i+1]));
+        }
+      }
+    });
+    return p.unproject(closestPoint);
+  }
+};
+
+geosite.vecmath.getClosestFeatureAndLocation = function(nearbyFeatures, target)
+{
+  var closestFeature = undefined;
+  var closestDistance = 0;
+  var closestLocation = undefined;
+  if(nearbyFeatures != undefined)
+  {
+    if(nearbyFeatures.length > 0)
+    {
+      closestFeature = nearbyFeatures[0];
+      closestDistance = geosite.vecmath.distance(target, nearbyFeatures[0].geometry);
+      closestLocation = geosite.vecmath.closestLocation(target, nearbyFeatures[0].geometry);
+      for(var i = 1; i < nearbyFeatures.length ;i++)
+      {
+        var f = nearbyFeatures[i];
+        if(geosite.vecmath.distance(target, f.geometry) < closestDistance)
+        {
+          closestFeature = f;
+          closestDistance = geosite.vecmath.distance(target, f.geometry);
+          closestLocation = geosite.vecmath.closestLocation(target, f.geometry);
+        }
+      }
+    }
+  }
+  return {'feature': closestFeature, 'location': closestLocation};
+};
+
+geosite.filters = {};
+
+geosite.filters["first"] = function()
+{
+    return function(array)
+    {
+        if (!Array.isArray(array))
+        {
+            return array;
+        }
+        return array[0];
+    };
+};
+
+geosite.filters["md2html"] = function()
+{
+  return function(text)
+  {
+    if(text != undefined)
+    {
+      var converter = new showdown.Converter();
+      html = converter.makeHtml(text);
+      html = html.substring("<p>".length, html.length - "</p>".length);
+      var pattern = new RegExp("(<a .*)>(.*?)</a>", "gi");
+      html = html.replace(pattern, '$1 target="_blank">$2</a>');
+      return html;
+    }
+    else
+    {
+      return "";
+    }
+  };
+};
+
+geosite.filters["default"] = function()
+{
+  return function(value, fallback)
+  {
+    return value || fallback;
+  };
+};
+
+geosite.filters["tabLabel"] = function()
+{
+  return function(value)
+  {
+    return value.split(" ").length == 2 ? value.replace(' ', '<br>') : value;
+  };
+};
+
+geosite.directives = {};
+
+//geosite-modal-layer-more
+//geosite.directives["geositeModalLayerMore"] =
+
+//geosite-modal-layer-more
+//geosite.directives["geositeModalLayerCarto"] = 
+
+geosite.directives["stopEvent"] = function(){
+  return {
+    restrict: 'EA',
+    link: function(scope, element, attr){
+      var events = attr.stopEvent.split(' ');
+      var stopFunction = function(e) {
+        e.stopPropagation();
+      };
+      for (var i = 0; i < events.length; i++) {
+        var event = events[i];
+        element.bind(event, stopFunction);
+      }
+    }
+  };
 };
 
 /**
@@ -166,6 +361,20 @@ geosite.init_state = function(state, stateschema)
         }
       });
     });
+  }
+
+  // Update Filters
+  if(newState["styles"] != undefined)
+  {
+    /*
+    $.each(newState["styles"], function(layer_id, layer_style){
+      var type = stateschema["filters"][layer_id][filter_id].toLowerCase();
+      var value = getHashValue("style:"+layer_id, type);
+      if(value != undefined && value != "")
+      {
+        newState["filters"][layer_id][filter_id] = value;
+      }
+    });*/
   }
 
   return newState;
@@ -418,6 +627,24 @@ var layersAsArray = function(layers)
 {
   return $.map(layers, function(layer, id){return {'id':id, 'layer':layer};});
 };
+var extract = function(keyChain, node)
+{
+	var obj = undefined;
+	if(keyChain.length==0)
+	{
+		obj = node;
+	}
+	else
+	{
+		if(node!=undefined)
+		{
+			var newKeyChain = keyChain.slice(1);
+			var newNode = node[""+keyChain[0]];
+			obj = extract(newKeyChain, newNode);
+		}
+	}
+	return obj;
+};
 
 geosite.codec = {};
 
@@ -430,14 +657,32 @@ geosite.codec.parseFeatures = function(response, fields_by_featuretype)
       var f = $(this).children();
       var typeName = f.prop("tagName").toLowerCase();
       var attributes = geosite.codec.parseAttributes(f, fields_by_featuretype[typeName]);
-      var coords = f.find("geonode\\:shape").find("gml\\:point").find("gml\\:coordinates").text().split(",");
-      var geom = new L.LatLng(parseFloat(coords[1]), parseFloat(coords[0]));
-
+      var shape = f.find("geonode\\:shape");
+      var geom = undefined;
+      if(shape.find("gml\\:point").length > 0)
+      {
+        var coords = shape.find("gml\\:point").find("gml\\:coordinates").text().split(",");
+        geom = new L.LatLng(parseFloat(coords[1]), parseFloat(coords[0]));
+      }
+      else if(shape.find("gml\\:multilinestring").length > 0)
+      {
+        var coords = shape.find("gml\\:multilinestring")
+          .find("gml\\:linestringmember")
+          .find("gml\\:linestring")
+          .find("gml\\:coordinates")
+          .text().split(" ");
+        coords = $.map(coords, function(x, i){
+          var a = x.split(",");
+          return [[parseFloat(a[0]), parseFloat(a[1])]];
+        });
+        var geojson = [{"type": "LineString","coordinates": coords}];
+        geom = new L.GeoJSON(geojson, {});
+      }
       var newFeature = {
         'featuretype': typeName,
         'attributes': attributes,
-        'geometry': geom};
-
+        'geometry': geom
+      };
       features.push(newFeature);
   });
   return features;
@@ -470,7 +715,7 @@ geosite.codec.parseAttributes  = function(element, fields)
 
 geosite.popup = {};
 
-geosite.popup.buildField = function(field, feature)
+geosite.popup.buildField = function(field, layer, feature)
 {
   var output = field["output"] || field["attribute"];
   var html = undefined;
@@ -498,12 +743,12 @@ geosite.popup.buildField = function(field, feature)
   {
     if(field.type == "link")
     {
-      var value = field.value != undefined ? field.value : "{{ attributes." + output + " }}";
+      var value = field.value != undefined ? field.value : "{{ feature.attributes." + output + " }}";
       html = "<span><b>"+ field.label +":</b> <a target=\"_blank\" href=\""+field.url+"\">";
       html += value;
       html += "</a></span>";
     }
-    else if(field.type == "date")
+    else
     {
       var value = undefined;
       if(field.value != undefined)
@@ -512,23 +757,37 @@ geosite.popup.buildField = function(field, feature)
       }
       else
       {
-        var format = field.format || "medium";
-        value = "{{ attributes." + output + " | date:'"+format+"'}}"
+        if(field.type == "date")
+        {
+          var format = field.format || "medium";
+          value = "feature.attributes." + output + " | date:'"+format+"'"
+        }
+        else
+        {
+          value = "feature.attributes." + output
+        }
+        if(field.fallback)
+        {
+          value = "("+value+") || '"+field.fallback+"'"
+        }
+        value = "{{ "+value +" }}";
       }
       html = "<span><b>"+ field.label +":</b> "+value+"</span>";
-    }
-    else
-    {
-      html = "<span><b>"+ field.label +":</b> {{ attributes." + output + " }}</span>";
     }
   }
   return html;
 };
 
-geosite.popup.openPopup = function($interpolate, featureLayer, feature, location, map)
+geosite.popup.buildPopupTemplate = function(popup, layer, feature)
 {
-  var fl = featureLayer;
-  var panes = fl.popup.panes;
+  var panes = popup.panes;
+  var popupTemplate = "";
+  //////////////////
+  if(angular.isDefined(popup.title))
+  {
+    popupTemplate += "<h5 style=\"word-wrap:break-word;text-align:center;\">"+popup.title+"</h5>";
+  }
+  //////////////////
   var paneContents = [];
   for(var i = 0; i < panes.length; i++)
   {
@@ -536,7 +795,7 @@ geosite.popup.openPopup = function($interpolate, featureLayer, feature, location
     var popupFields = [];
     for(var j = 0; j < pane.fields.length; j++)
     {
-      var popupField = geosite.popup.buildField(pane.fields[j], feature);
+      var popupField = geosite.popup.buildField(pane.fields[j], layer, feature);
       if(popupField != undefined)
       {
         popupFields.push(popupField);
@@ -545,8 +804,7 @@ geosite.popup.openPopup = function($interpolate, featureLayer, feature, location
     var paneContent = popupFields.join("<br>");
     paneContents.push(paneContent);
   }
-
-  var popupTemplate = undefined;
+  //////////////////
   if(panes.length > 1)
   {
     var tabs = [];
@@ -567,13 +825,24 @@ geosite.popup.openPopup = function($interpolate, featureLayer, feature, location
     }
     ///////////////
     var content_html = "<div class=\"tab-content\">"+paneContentsWithWrapper.join("")+"</div>";
-    popupTemplate = tab_html + content_html;
+    popupTemplate += tab_html + content_html;
   }
   else
   {
-    popupTemplate = paneContents[0];
+    popupTemplate += paneContents[0];
   }
-  var popupContent = $interpolate(popupTemplate)(feature);
+  return popupTemplate;
+};
+
+geosite.popup.openPopup = function($interpolate, featureLayer, feature, location, map)
+{
+  var fl = featureLayer;
+  var popupTemplate = geosite.popup.buildPopupTemplate(fl.popup, featureLayer, feature);
+  var ctx = {
+    'layer': featureLayer,
+    'feature': feature
+  };
+  var popupContent = $interpolate(popupTemplate)(ctx);
   var popup = new L.Popup({maxWidth: (fl.popup.maxWidth || 400)}, undefined);
   popup.setLatLng(new L.LatLng(location.lat, location.lon));
   popup.setContent(popupContent);
@@ -597,7 +866,7 @@ geosite.tilemath.point_to_bbox = function(x, y, z, digits)
 
 geosite.tilemath.point_to_radius = function(z)
 {
-  return 4.0 / z;
+  return (geosite.config.click_radius || 4.0) / z;
 };
 
 geosite.tilemath.tms_to_bbox = function(x, y, z)
@@ -677,12 +946,15 @@ geosite.layers.init_baselayers = function(map, baselayers)
   }
   return layers;
 };
-geosite.layers.init_featurelayer_post = function($scope, live, id, fl)
+geosite.layers.init_featurelayer_post = function($scope, live, id, fl, visible)
 {
   if(fl != undefined)
   {
-    fl.addTo(live["map"]);
-    geosite.intend("layerLoaded", {'type':'featurelayer', 'layer': id}, $scope);
+    if(visible != undefined ? visible : true)
+    {
+      fl.addTo(live["map"]);
+    }
+    geosite.intend("layerLoaded", {'type':'featurelayer', 'layer': id, 'visible': visible}, $scope);
   }
   else
   {
@@ -704,7 +976,7 @@ geosite.layers.init_featurelayer_wms = function($scope, live, map_config, id, la
     attribution: layerConfig.source.attribution
   });
   live["featurelayers"][id] = fl;
-  geosite.layers.init_featurelayer_post($scope, live, id, fl);
+  geosite.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
 };
 geosite.layers.init_featurelayer_geojson = function($scope, live, map_config, id, layerConfig)
 {
@@ -716,7 +988,7 @@ geosite.layers.init_featurelayer_geojson = function($scope, live, map_config, id
         attribution: layerConfig.source.attribution
       });
       live["featurelayers"][id] = fl;
-      geosite.layers.init_featurelayer_post($scope, live, id, fl);
+      geosite.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
     }
   });
 };

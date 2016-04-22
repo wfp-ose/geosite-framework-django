@@ -35,6 +35,26 @@
             {% endfor %}
           </div>
         </div>
+      {% elif f.type == "checkbox" %}
+        <div class="geosite-filter geosite-filter-checkbox" style="height: {{ f.height }};">
+          <div class="geosite-filter-label">
+            <a data-toggle="modal" data-target="#geosite-filter-description-{{ forloop.counter0 }}"><i class="fa fa-info-circle"></i></a>
+            <span>{{ f.label }}</span> :
+          </div>
+          <div class="btn-group" style="float:left;" data-toggle="buttons" data-output="{{ f.checkbox.output }}">
+            {% for opt in f.checkbox.options %}
+            <label class="btn btn-sm btn-default{% if opt.checked %} active{% endif %}">
+              <input
+                type="checkbox"
+                id="{{ opt.id }}"
+                data-value="{{ opt.value}}"
+                autocomplete="off"
+                {% if opt.checked %} checked="checked"{% endif %}/>
+              {{ opt.label }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
       {% elif f.type == "slider" %}
         <div class="geosite-filter geosite-filter-slider" style="height: {{ f.height }};">
           <div class="geosite-filter-label">
