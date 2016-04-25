@@ -1,17 +1,13 @@
 language: python
-
 python:
-    - "2.7"
-
+  - '2.7'
 install:
-    - pip install flake8
-    - pip install -r requirements.txt
-
+  - pip install flake8
+  - pip install -r requirements.txt
 notifications:
-    email:
-        - pjdufour.dev@gmail.com
-
-before_script:
-    flake8 geosite
-
+  email:
+    - pjdufour.dev@gmail.com
+  slack:
+    secure: URp0P1jA2LouyOzfqTIhS61mVE4BcK9MP9tU9wikhkgPoDHt+8nbS++H/u986ePgXx4ZwBr0OsGkxplXSCm6IAjFPX5/5HFjQBeqahYvz3pB1qIoiq3+8C7z26AotPrzc925lZRPQooibAUCPeDSTbA7drpwfsc7oDAglZu7vUEqM6P3rUStK1yYAs4eRks++zc0o7jkHkonGSwbCC9v0C23dczpo+j+aaLD+/DE9x6KBYfRsM4GDzvehFz8JII1L/ue/kAedZ/2QFg/k4NNLYxTU/76oijEnoeLkP9MVCpn0tluj9O6d2iT2n2gnRQH8zPUGjUFiqI8R2WJEGkAki5KxomS94yAkq2tiYLXM3zLiEJZnZkjedxU8ILJLe/BD/esxuJFmePAyINYDdp9zNljP44/6aLSiG99++qDEkQBE1bVzhmOwsIqsCvESkAY/kxRfFQLrjTMmX/4/Nn+kcque+iNFZ9h+jMU7c6wpX/vtHtnV8AholIMAepL0aMQFfOSTjUodZFNpAd32FjMQkXsCDy/EnnZzD8m5UdPaHlvtpbYcNFTjwyTaVUxy/P0RUuVwch1I3DrfFMJlsoXh6fIWj/sS+oVT7MgIFTwLVUdsr28tnsJmH5S9uazuwfMIPe6gwN/F1VLdP+2Pu+JcDX1TCMfcHDkpmTtJrkOhvM=
+before_script: flake8 geosite
 script: python -m unittest geosite.tests.test
