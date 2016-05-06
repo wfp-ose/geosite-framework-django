@@ -1,4 +1,9 @@
-var geosite = {};
+var geosite = {
+  'directives': {},
+  'filters': {},
+  'vecmath': {},
+  'tilemath': {}  
+};
 
 
 geosite.assert_float = function(x, fallback)

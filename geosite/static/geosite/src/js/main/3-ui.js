@@ -17,7 +17,7 @@ geosite.ui_init_slider_label = function(that, type, range, value)
   }
   else if(type=="continuous")
   {
-    if(range.toLowerCase() == "true")
+    if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
       var h = that.data('label-template')
         .replace(new RegExp('{{(\\s*)value(s?).0(\\s*)}}', 'gi'), value[0])
@@ -46,7 +46,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
   if(type=="ordinal")
   {
     that.slider({
-      range: (range.toLowerCase() == "true") ? true : range,
+      range: (($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true")) ? true : range,
       value: value,
       min: 0,
       max: maxValue,
@@ -63,7 +63,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
   }
   else if(type=="continuous")
   {
-    if(range.toLowerCase() == "true")
+    if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
       that.slider({
         range: true,
@@ -124,7 +124,7 @@ geosite.ui_update_slider_label = function(event, ui)
   }
   else if(type=="continuous")
   {
-    if(range.toLowerCase() == "true")
+    if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
       var h = that.data('label-template')
         .replace(new RegExp('{{(\\s*)value(s?).0(\\s*)}}', 'gi'), (ui.values[0]))

@@ -115,7 +115,7 @@ var extract = function(keyChain, node)
 		if(node!=undefined)
 		{
 			var newKeyChain = keyChain.slice(1);
-			var newNode = node[""+keyChain[0]];
+			var newNode = Array.isArray(node) ? node[keyChain[0]]: node[""+keyChain[0]];
 			obj = extract(newKeyChain, newNode);
 		}
 	}

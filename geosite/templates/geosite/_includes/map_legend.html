@@ -13,122 +13,9 @@
       data-toggle="collapse">Legend - Click to Open</a>
   </div>
   <div id="geosite-map-legend-container" class="geosite-map-legend-container collapse" style="">
-    <div class="geosite-map-legend-featurelayers">
-      {% for key, layer in map_config.featurelayers.items|sortItemsByList:map_config.legendlayers %}
-      {% if layer.legend %}
-      <div class="geosite-map-legend-item noselect" data-layer="{{ key }}">
-        <div class="geosite-map-legend-item-left">
-          <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
-            <a
-              class="geosite-intent"
-              data-intent-name="toggleModal"
-              data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-more&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;featurelayers&quot;,&quot;{{ key }}&quot;]}}">
-              <i class="fa fa-info-circle"></i>
-            </a>
-          </div><!--
-          --><div class="geosite-map-legend-item-icon geosite-map-legend-item-visibility">
-             <a
-               class="geosite-map-legend-item-visibility-button geosite-intent geosite-toggle{% if layer|isVisible %}{% else %} geosite-off{% endif %}"
-               data-intent-names="[&quot;showLayer&quot;,&quot;hideLayer&quot;]"
-               data-intent-data="{&quot;layer&quot;:&quot;{{ key }}&quot;}">
-               <i class="fa fa-eye geosite-on"></i><i class="fa fa-eye-slash geosite-off"></i>
-             </a>
-         </div><!--
-         --><div class="geosite-map-legend-item-icon geosite-map-legend-item-zoomto{% if layer.type != "geojson" %} fade disabled{% endif %}">
-            <a
-              class="geosite-map-legend-item-zoomto-button geosite-intent"
-              data-intent-name="zoomToLayer"
-              data-intent-data="{&quot;layer&quot;:&quot;{{ key }}&quot;}">
-              <i class="fa fa-compress"></i>
-            </a>
-          </div>
-        </div><!--
-        --><div class="geosite-map-legend-item-right">
-          {% if layer.cartography.0.legend.symbol %}
-          <div class="geosite-map-legend-item-symbol">
-            <a
-              class="geosite-intent"
-              data-intent-name="toggleModal"
-              data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-carto&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;featurelayers&quot;,&quot;{{ key }}&quot;]}}">
-            {% if layer.cartography.0.legend.symbol.type == "circle" %}
-            <svg width="100%" height="100%" version="1.0" xmlns="http://www.w3.org/2000/svg">
-              <circle
-              cx="50%" cy="50%" r="{{ layer.cartography.0.legend.symbol.radius }}"
-              fill="{{ layer.cartography.0.styles.default.color }}" stroke-width="1" stroke="#000000"></circle>
-            </svg>
-            {% elif layer.cartography.0.legend.symbol.type == "ellipse" %}
-            <svg width="100%" height="100%" version="1.0" xmlns="http://www.w3.org/2000/svg">
-              <ellipse
-                cx="50%" cy="50%" rx="{{ layer.cartography.0.legend.symbol.width }}" ry="{{ layer.cartography.0.legend.symbol.height }}"
-                fill="{{ layer.cartography.0.styles.default.color }}" stroke-width="1" stroke="#000000"></ellipse>
-            </svg>
-            {% elif layer.cartography.0.legend.symbol.type == "graduated" %}
-            <svg width="{{ layer.cartography.0.legend.symbol.width }}px" height="100%" version="1.0" xmlns="http://www.w3.org/2000/svg">
-            {% with numberOfColors=layer.cartography.0.colors.ramp|length %}
-            {% for color in layer.cartography.0.colors.ramp %}
-              {% with idx=forloop.counter0 %}
-              <rect
-                x="{{ idx|percent:numberOfColors }}%"
-                y="0"
-                width="{{ 1|percent:numberOfColors }}%"
-                height="{{ layer.cartography.0.legend.symbol.height }}"
-                fill="{{ color }}"
-                stroke-width="1"
-                stroke="#000000"/>
-              {% endwith %}
-            {% endfor %}
-            {% endwith %}
-            </svg>
-            {% elif layer.cartography.0.legend.symbol.type == "graphic" %}
-              {% if layer.cartography.0.legend.symbol.preview %}
-              <img src="{{ layer|legendGraphic }}" />
-              {% else %}
-              <i class="fa fa-image" style="color:black; font-size: 20px;"></i>
-              {% endif %}
-            {% endif %}
-            </a>
-          </div><!--
-          -->{% endif %}<div class="geosite-map-legend-item-label"><span>{{ layer.legend.label }}</span></div>
-        </div>
-      </div>
-      {% endif %}
-      {% endfor %}
-    </div>
+    <div geosite-legend-featurelayers></div>
     <hr>
-    <div class="geosite-map-legend-baselayers geosite-radio-group">
-      {% for layer in map_config.baselayers %}
-      {% if layer.legend %}
-      <div class="geosite-map-legend-item noselect" data-layer="{{ layer.id }}">
-        <div class="geosite-map-legend-item-left">
-          <div class="geosite-map-legend-item-icon geosite-map-legend-item-more">
-            <a
-              class="geosite-intent"
-              data-intent-name="toggleModal"
-              data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-more&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;baselayers&quot;,&quot;{{ forloop.counter0 }}&quot;]}}">
-              <i class="fa fa-info-circle"></i>
-            </a>
-          </div><!--
-          --><div class="geosite-map-legend-item-icon geosite-map-legend-item-visibility">
-               <a
-                 class="geosite-map-legend-item-visibility-button geosite-intent geosite-radio{% if forloop.counter0 == 0 %} geosite-on{% endif %}"
-                 data-intent-name="switchBaseLayer"
-                 data-intent-data="{&quot;layer&quot;:&quot;{{ layer.id }}&quot;}"
-                 data-intent-class-on="geosite-on"
-                 data-intent-class-off="">
-                 <i class="fa fa-eye geosite-on"></i><i class="fa fa-eye-slash geosite-off"></i>
-               </a>
-             </div><!--
-          --><div class="geosite-map-legend-item-symbol" style="width: 10px;"></div>
-        </div><!--
-        --><div class="geosite-map-legend-item-right">
-          <div class="geosite-map-legend-item-label" style="width: 100%;">
-            <span>{{ layer.legend.label }}</span>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      {% endfor %}
-    </div>
+    <div geosite-legend-baselayers></div>
   </div>
   <div class="geosite-legend-modals">
     <div
@@ -156,6 +43,19 @@
       aria-labelledby="myModalLabel"
       style="display: block;">
       <div geosite-modal-layer-carto id="geosite-layer-carto"></div>
+    </div>
+    <div
+      id="geosite-modal-layer-config"
+      class="geosite-controller geosite-controller-modal modal fade geosite-layer-config"
+      ng-controller="geosite-modal-layer-config"
+      data-controller-name="geosite-modal-layer-config"
+      data-controller-type="geosite-modal-layer-config"
+      style="z-index:-1;color:black;"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      style="display: block;">
+      <div geosite-modal-layer-config id="geosite-layer-config"></div>
     </div>
   </div>
 </div>

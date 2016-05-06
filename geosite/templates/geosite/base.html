@@ -75,9 +75,14 @@
     {% if GEOSITE_STATIC_DEBUG.leaflet %}
     <script src="{{ STATIC_URL}}geosite/lib/leaflet/1.0.0-b1/leaflet-src.js"></script>
     <script src="{{ STATIC_URL}}geosite/lib/Leaflet.utfgrid/dist/leaflet.utfgrid-src.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-simpleheat.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatcanvas.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatlayer.js"></script>
     {% else %}
     <script src="{{ STATIC_URL}}geosite/lib/leaflet/1.0.0-b1/leaflet.js"></script>
-    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.utfgrid/dist/leaflet.utfgrid.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-simpleheat.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatcanvas.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatlayer.js"></script>
     {% endif %}
     <!-- JavaScript / Internal -->
     {% block head_main_js %}

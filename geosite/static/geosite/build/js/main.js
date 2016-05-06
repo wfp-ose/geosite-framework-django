@@ -1,4 +1,9 @@
-var geosite = {};
+var geosite = {
+  'directives': {},
+  'filters': {},
+  'vecmath': {},
+  'tilemath': {}  
+};
 
 
 geosite.assert_float = function(x, fallback)
@@ -259,80 +264,6 @@ geosite.vecmath.getClosestFeatureAndLocation = function(nearbyFeatures, target)
   return {'feature': closestFeature, 'location': closestLocation};
 };
 
-geosite.filters = {};
-
-geosite.filters["first"] = function()
-{
-    return function(array)
-    {
-        if (!Array.isArray(array))
-        {
-            return array;
-        }
-        return array[0];
-    };
-};
-
-geosite.filters["md2html"] = function()
-{
-  return function(text)
-  {
-    if(text != undefined)
-    {
-      var converter = new showdown.Converter();
-      html = converter.makeHtml(text);
-      html = html.substring("<p>".length, html.length - "</p>".length);
-      var pattern = new RegExp("(<a .*)>(.*?)</a>", "gi");
-      html = html.replace(pattern, '$1 target="_blank">$2</a>');
-      return html;
-    }
-    else
-    {
-      return "";
-    }
-  };
-};
-
-geosite.filters["default"] = function()
-{
-  return function(value, fallback)
-  {
-    return value || fallback;
-  };
-};
-
-geosite.filters["tabLabel"] = function()
-{
-  return function(value)
-  {
-    return value.split(" ").length == 2 ? value.replace(' ', '<br>') : value;
-  };
-};
-
-geosite.directives = {};
-
-//geosite-modal-layer-more
-//geosite.directives["geositeModalLayerMore"] =
-
-//geosite-modal-layer-more
-//geosite.directives["geositeModalLayerCarto"] = 
-
-geosite.directives["stopEvent"] = function(){
-  return {
-    restrict: 'EA',
-    link: function(scope, element, attr){
-      var events = attr.stopEvent.split(' ');
-      var stopFunction = function(e) {
-        e.stopPropagation();
-      };
-      for (var i = 0; i < events.length; i++) {
-        var event = events[i];
-        element.bind(event, stopFunction);
-      }
-    }
-  };
-};
-
 /**
  * init_state will overwrite the default state from the server with params in the url.
  * @param {Object} state - Initial state from server
@@ -399,7 +330,7 @@ geosite.ui_init_slider_label = function(that, type, range, value)
   }
   else if(type=="continuous")
   {
-    if(range.toLowerCase() == "true")
+    if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
       var h = that.data('label-template')
         .replace(new RegExp('{{(\\s*)value(s?).0(\\s*)}}', 'gi'), value[0])
@@ -428,7 +359,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
   if(type=="ordinal")
   {
     that.slider({
-      range: (range.toLowerCase() == "true") ? true : range,
+      range: (($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true")) ? true : range,
       value: value,
       min: 0,
       max: maxValue,
@@ -445,7 +376,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
   }
   else if(type=="continuous")
   {
-    if(range.toLowerCase() == "true")
+    if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
       that.slider({
         range: true,
@@ -506,7 +437,7 @@ geosite.ui_update_slider_label = function(event, ui)
   }
   else if(type=="continuous")
   {
-    if(range.toLowerCase() == "true")
+    if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
       var h = that.data('label-template')
         .replace(new RegExp('{{(\\s*)value(s?).0(\\s*)}}', 'gi'), (ui.values[0]))
@@ -639,7 +570,7 @@ var extract = function(keyChain, node)
 		if(node!=undefined)
 		{
 			var newKeyChain = keyChain.slice(1);
-			var newNode = node[""+keyChain[0]];
+			var newNode = Array.isArray(node) ? node[keyChain[0]]: node[""+keyChain[0]];
 			obj = extract(newKeyChain, newNode);
 		}
 	}
@@ -984,9 +915,45 @@ geosite.layers.init_featurelayer_geojson = function($scope, live, map_config, id
     url: layerConfig.source.url,
     dataType: "json",
     success: function(response){
-      var fl = L.geoJson(response, {
-        attribution: layerConfig.source.attribution
-      });
+      var fl = undefined;
+      if(layerConfig.transform == "heatmap")
+      {
+        var heatLayerData = [];
+        var maxIntensity = 0;
+        for(var i = 0; i < response[0]["features"].length; i++)
+        {
+          var intensity = ("attribute" in layerConfig["heatmap"] && layerConfig["heatmap"]["attribute"] != "") ? response[0]["features"][i]["properties"][layerConfig["heatmap"]["attribute"]] : 1.0;
+          heatLayerData.push([
+            response[0]["features"][i]["geometry"]["coordinates"][1],
+            response[0]["features"][i]["geometry"]["coordinates"][0],
+            intensity
+          ]);
+          if(intensity > maxIntensity)
+          {
+            maxIntensity = intensity;
+          }
+        }
+        for(var i = 0; i < heatLayerData.length; i++)
+        {
+          heatLayerData[i][2] = heatLayerData[i][2] / maxIntensity;
+        }
+
+        var canvas = L.heatCanvas();
+        fl = L.heatLayer(heatLayerData, {
+          "renderer": canvas,
+          "attribution": layerConfig["source"]["attribution"],
+          "radius": (layerConfig["heatmap"]["radius"] || 25),
+          "blur": (layerConfig["heatmap"]["blur"] || 15),
+          "max": (layerConfig["heatmap"]["max"] || 1.0),
+          "minOpacity": (layerConfig["heatmap"]["minOpacity"] || 0.5)
+        });
+      }
+      else
+      {
+        fl = L.geoJson(response, {
+          attribution: layerConfig.source.attribution
+        });
+      }
       live["featurelayers"][id] = fl;
       geosite.layers.init_featurelayer_post($scope, live, id, fl, layerConfig.visible);
     }
