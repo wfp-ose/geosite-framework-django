@@ -56,12 +56,6 @@ geosite.controllers.controller_base = function($scope, $element) {
 
   geosite.init_intents($($element), $scope);
 
-  $scope.toggleModal = function(selector) {
-
-    $(selector).modal('toggle');
-
-  };
-
 };
 
 geosite.init_controller_base = function(app)

@@ -1,0 +1,25 @@
+---
+name: "Geosite Framework 0.1"
+path:
+  geosite: "./src/geosite"
+plugins:
+  - base
+  - modal
+  - legend
+  - map
+dependencies:
+  production:
+    project: []
+    javascript:
+      - "./src/js/main/*.js"
+  test:
+    javascript:
+      - "./src/js/main/*.js"
+      - "./src/js/polyfill/*.js"
+compiler:
+  list:
+    - name: polyfill_js
+      type: js
+      src: "./src/js/polyfill/*.js"
+      outfile: "polyfill.js"
+      dest:  "./build/js/"

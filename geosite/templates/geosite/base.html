@@ -86,6 +86,7 @@
     {% endif %}
     <!-- JavaScript / Internal -->
     {% block head_main_js %}
+    <!-- Should be overwritten by downstream projects -->
     {% if GEOSITE_STATIC_DEBUG.main %}
     <script src="{{ STATIC_URL }}geosite/build/js/main.js?v={{ GEOSITE_STATIC_VERSION }}"></script>
     {% else %}
