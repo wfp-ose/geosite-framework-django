@@ -12,7 +12,7 @@ geosite.filters["md2html"] = function()
       var pattern = new RegExp("(<a .*)>(.*?)</a>", "gi");
       html = html.replace(pattern, '$1 target="_blank">$2</a>');
       // Replace New Line characters with Line Breaks
-      html = html.replace('\n','<br>');
+      html = html.replace(new RegExp('\n', 'gi'),'<br>');
       return html;
     }
     else

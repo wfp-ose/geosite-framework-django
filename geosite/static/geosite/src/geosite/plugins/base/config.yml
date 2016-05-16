@@ -10,6 +10,9 @@ filters:
   - default.js
   - join.js
   - first.js
+  - last.js
+  - formatInteger.js
+  - formatArray.js
   - md2html.js
   - percent.js
   - tabLabel.js

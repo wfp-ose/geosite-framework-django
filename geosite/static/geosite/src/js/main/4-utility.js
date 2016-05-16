@@ -30,6 +30,14 @@ var getHashValue = function(keys, type)
         {
           value = (value != undefined && value != null && value != "") ? parseInt(value, 10) : undefined;
         }
+        else if(type == "stringarray")
+        {
+          if(value != undefined)
+          {
+            var newValue = value.split(",");
+            value = newValue;
+          }
+        }
         else if(type == "integerarray")
         {
           if(value != undefined)
@@ -69,6 +77,10 @@ var hasHashValue = function(keys)
 {
     var value = getHashValue(keys);
     return value != undefined && value != null && value != "";
+};
+var getHashValueAsStringArray = function(keys)
+{
+  return getHashValue(keys, "stringarray");
 };
 var getHashValueAsInteger = function(keys)
 {
