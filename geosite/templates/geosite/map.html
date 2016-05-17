@@ -17,7 +17,7 @@
 {% block init %}
 <script type="text/javascript" language="Javascript">
     $(function(){
-        init_start("mainApp");
+        geosite.{{ init_function | default_if_none:"init_explore" }}("mainApp");
     });
 </script>
 {% endblock %}
