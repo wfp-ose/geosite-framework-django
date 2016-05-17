@@ -62,10 +62,10 @@ class data_local_country(object):
         return data
 
 
-def calc_breaks_natural(values, breaks):
+def calc_breaks_natural(values, n_classes):
     natural = None
     if values:
-        natural = [float(bp) for bp in jenks(values, breaks)]
+        natural = [float(bp) for bp in jenks(values, n_classes)]
     else:
         natural = []
     return natural

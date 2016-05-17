@@ -17,7 +17,8 @@ filters:
   - percent.js
   - tabLabel.js
   - as_float.js
-  - addFloat.js
+  - choose.js
+  - add.js
   - default_if_undefined.js
   - title.js
   - as_array.js
@@ -25,3 +26,10 @@ filters:
   - url_shapefile.js
   - url_geojson.js
   - url_kml.js
+  - breakpoint.js
+  - breakpoints.js
+  - formatBreakpoint.js
+  - formatFloat.js
+  - position_x.js
+  - width_x.js
+  - length.js
