@@ -28,7 +28,7 @@ geosite.controllers["controller_legend"] = function(
 
   $scope.$on("refreshMap", function(event, args){
     console.log('args: ', args);
-    var element_featurelayers = jqe.find('.geosite-map-legend-featurelayers');
+    /*var element_featurelayers = jqe.find('.geosite-map-legend-featurelayers');
     $('.geosite-map-legend-item', element_featurelayers).each(function(){
       var layerID = $(this).data('layer');
       var element_symbol = $(this).find('.geosite-map-legend-item-symbol:first');
@@ -37,6 +37,6 @@ geosite.controllers["controller_legend"] = function(
         return x["id"] == styleID;
       });
       var style =  styles.length > 0 ? styles[0] : undefined;
-    });
+    });*/
   });
 };
