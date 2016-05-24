@@ -7,6 +7,7 @@ plugins:
   - modal
   - legend
   - map
+  - welcome
 dependencies:
   production:
     project: []

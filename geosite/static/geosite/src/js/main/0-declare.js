@@ -2,9 +2,23 @@ var geosite = {
   'directives': {},
   'filters': {},
   'vecmath': {},
-  'tilemath': {}  
+  'tilemath': {},
+  'api': {}
 };
 
+geosite.api.welcome = function(options)
+{
+  options = options || {};
+  var scope = options['$scope'] || options['scope'] || angular.element("#geosite-main").scope();
+  var intentData = {
+    "id": "geosite-modal-welcome",
+    "dynamic": {},
+    "static": {
+      "welcome": scope.map_config["welcome"]
+    }
+  };
+  geosite.intend("toggleModal", intentData, scope);
+};
 
 geosite.assert_float = function(x, fallback)
 {

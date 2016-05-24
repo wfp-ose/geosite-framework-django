@@ -1,0 +1,6 @@
+---
+controllers: []
+directives:
+  - geositeModalWelcome.js
+templates:
+  - modal/modal_welcome.tpl.html

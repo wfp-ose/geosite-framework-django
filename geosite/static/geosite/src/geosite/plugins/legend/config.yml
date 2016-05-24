@@ -21,3 +21,5 @@ templates:
   - symbol/symbol_graphic.tpl.html
   - legend_baselayers.tpl.html
   - legend_featurelayers.tpl.html
+less:
+  - legend.less

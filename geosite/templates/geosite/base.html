@@ -15,9 +15,11 @@
     <!-- CSS / External-->
     <link href="{{ STATIC_URL}}geosite/lib/jquery-ui/{{ GEOSITE_STATIC_DEPS.jqueryui.version }}/jquery-ui.min.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL}}geosite/lib/select2/select2-{{ GEOSITE_STATIC_DEPS.select2.version }}/dist/css/select2.min.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL}}geosite/lib/select2-bootstrap-theme/dist/select2-bootstrap.min.css" rel="stylesheet"/>
     {% block head_bootstrap_css %}
     <link href="{{ STATIC_URL }}geosite/build/bootstrap/bootstrap.css" rel="stylesheet"/>
     {% endblock %}
+    <link href="{{ STATIC_URL }}geosite/lib/typeahead.js-bootstrap-css/typeaheadjs.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL}}geosite/lib/c3/{{ GEOSITE_STATIC_DEPS.c3.version }}/c3.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ STATIC_URL}}geosite/lib/leaflet/1.0.0-b1/leaflet.css" type="text/css" media="all" />
     <link href="{{ STATIC_URL}}geosite/lib/font-awesome/{{ GEOSITE_STATIC_DEPS.fontawesome.version }}/css/font-awesome.min.css" rel="stylesheet"/>
@@ -48,6 +50,7 @@
     {% else %}
     <script src="{{ STATIC_URL}}geosite/lib/select2/select2-{{ GEOSITE_STATIC_DEPS.select2.version }}/dist/js/select2.full.min.js"></script>
     {% endif %}
+    <script src="{{ STATIC_URL}}geosite/lib/typeahead/typeahead.js"></script>
     {% if GEOSITE_STATIC_DEBUG.angular %}
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/{{ GEOSITE_STATIC_DEPS.angular.version }}/angular-route.js"></script>

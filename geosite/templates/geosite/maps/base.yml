@@ -1,6 +1,9 @@
 {% block title %}
 title: Map
 {% endblock %}
+{% block welcome %}
+welcome:
+{% endblock %}
 {% block description %}
 description: ""
 {% endblock %}
