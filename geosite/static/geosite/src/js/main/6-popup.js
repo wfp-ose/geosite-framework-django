@@ -1,6 +1,11 @@
 geosite.popup = {};
 
-geosite.popup.buildField = function(field, layer, feature)
+geosite.popup.buildChart = function(chart, layer, feature, state)
+{
+  return "<div id=\""+chart.id+"\" class=\"geosite-popup-chart\"></div>"
+}
+
+geosite.popup.buildField = function(field, layer, feature, state)
 {
   var output = field["output"] || field["attribute"];
   var html = undefined;
@@ -63,7 +68,7 @@ geosite.popup.buildField = function(field, layer, feature)
   return html;
 };
 
-geosite.popup.buildPopupTemplate = function(popup, layer, feature)
+geosite.popup.buildPopupTemplate = function(popup, layer, feature, state)
 {
   var panes = popup.panes;
   var popupTemplate = "";
@@ -78,15 +83,34 @@ geosite.popup.buildPopupTemplate = function(popup, layer, feature)
   {
     var pane = panes[i];
     var popupFields = [];
-    for(var j = 0; j < pane.fields.length; j++)
+    var popupCharts = [];
+    if("fields" in pane)
     {
-      var popupField = geosite.popup.buildField(pane.fields[j], layer, feature);
-      if(popupField != undefined)
+      for(var j = 0; j < pane.fields.length; j++)
       {
-        popupFields.push(popupField);
+        var popupField = geosite.popup.buildField(pane.fields[j], layer, feature, state);
+        if(popupField != undefined)
+        {
+          popupFields.push(popupField);
+        }
+      }  
+    }
+    if("charts" in pane)
+    {
+      for(var j = 0; j < pane.charts.length; j++)
+      {
+        var popupChart = geosite.popup.buildChart(pane.charts[j], layer, feature, state);
+        if(popupChart != undefined)
+        {
+          popupCharts.push(popupChart);
+        }
       }
     }
     var paneContent = popupFields.join("<br>");
+    if(popupCharts.length > 0)
+    {
+      paneContent += "<hr>" + popupCharts.join("<br>");
+    }
     paneContents.push(paneContent);
   }
   //////////////////
@@ -119,16 +143,21 @@ geosite.popup.buildPopupTemplate = function(popup, layer, feature)
   return popupTemplate;
 };
 
-geosite.popup.openPopup = function($interpolate, featureLayer, feature, location, map)
+geosite.popup.buildPopupContent = function($interpolate, featureLayer, feature, state)
 {
-  var fl = featureLayer;
-  var popupTemplate = geosite.popup.buildPopupTemplate(fl.popup, featureLayer, feature);
+  var popupTemplate = geosite.popup.buildPopupTemplate(featureLayer.popup, featureLayer, feature, state);
   var ctx = {
     'layer': featureLayer,
-    'feature': feature
+    'feature': feature,
+    'state': state
   };
-  var popupContent = $interpolate(popupTemplate)(ctx);
-  var popup = new L.Popup({maxWidth: (fl.popup.maxWidth || 400)}, undefined);
+  return $interpolate(popupTemplate)(ctx);
+};
+
+geosite.popup.openPopup = function($interpolate, featureLayer, feature, location, map, state)
+{
+  var popupContent = geosite.popup.buildPopupContent($interpolate, featureLayer, feature, state);
+  var popup = new L.Popup({maxWidth: (featureLayer.popup.maxWidth || 400)}, undefined);
   popup.setLatLng(new L.LatLng(location.lat, location.lon));
   popup.setContent(popupContent);
   map.openPopup(popup);

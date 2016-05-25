@@ -13,6 +13,7 @@ filters:
   - last.js
   - formatInteger.js
   - formatArray.js
+  - formatMonth.js
   - md2html.js
   - percent.js
   - tabLabel.js
