@@ -72,7 +72,7 @@ def calc_breaks_natural(values, n_classes):
 
 
 def valuesByMonthToList(values, nodata="0"):
-    return [float(values_by_month.get(x, nodata)) for x in MONTHS_SHORT3]
+    return [float(values.get(x, nodata)) for x in MONTHS_SHORT3]
 
 
 def rowsToDict(rows, keys):
