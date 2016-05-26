@@ -2,7 +2,7 @@ var geosite = {
   'directives': {},
   'filters': {},
   'vecmath': {},
-  'tilemath': {}  
+  'tilemath': {}
 };
 
 
@@ -68,12 +68,12 @@ geosite.init_intents = function(element, scope)
       if(that.hasClass('geosite-off'))
       {
         that.removeClass('geosite-off');
-        geosite.intend(that.data('intent-names')[0], that.data('intent-data'), scope);
+        geosite.api.intend(that.data('intent-names')[0], that.data('intent-data'), scope);
       }
       else
       {
         that.addClass('geosite-off');
-        geosite.intend(that.data('intent-names')[1], that.data('intent-data'), scope);
+        geosite.api.intend(that.data('intent-names')[1], that.data('intent-data'), scope);
       }
     }
     else if(that.hasClass('geosite-radio'))
@@ -93,12 +93,12 @@ geosite.init_intents = function(element, scope)
           that.removeClass(that.data("intent-class-off"));
           siblings.addClass(that.data("intent-class-off"));
         }
-        geosite.intend(that.data('intent-name'), that.data('intent-data'), scope);
+        geosite.api.intend(that.data('intent-name'), that.data('intent-data'), scope);
       }
     }
     else
     {
-      geosite.intend(that.data('intent-name'), that.data('intent-data'), scope);
+      geosite.api.intend(that.data('intent-name'), that.data('intent-data'), scope);
     }
   });
 };
@@ -108,8 +108,6 @@ geosite.controllers = {};
 geosite.controllers.controller_base = function($scope, $element) {
 
   this.intend = geosite.intend;
-
-  geosite.init_intents($($element), $scope);
 
   $scope.toggleModal = function(selector) {
 
@@ -370,7 +368,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
           var newValue = that.data('options')[ui.value];
           var filter = {};
           filter[output] = newValue;
-          geosite.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
+          geosite.api.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
       }
     });
   }
@@ -390,7 +388,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
             var newValue = ui.values;
             var filter = {};
             filter[output] = newValue;
-            geosite.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
+            geosite.api.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
         }
       });
     }
@@ -408,7 +406,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
             var newValue = ui.value / 100.0;
             var filter = {};
             filter[output] = newValue;
-            geosite.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
+            geosite.api.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
         }
       });
     }
@@ -885,7 +883,7 @@ geosite.layers.init_featurelayer_post = function($scope, live, id, fl, visible)
     {
       fl.addTo(live["map"]);
     }
-    geosite.intend("layerLoaded", {'type':'featurelayer', 'layer': id, 'visible': visible}, $scope);
+    geosite.api.intend("layerLoaded", {'type':'featurelayer', 'layer': id, 'visible': visible}, $scope);
   }
   else
   {

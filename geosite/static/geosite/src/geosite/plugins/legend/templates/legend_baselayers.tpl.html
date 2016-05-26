@@ -9,7 +9,8 @@
         <a
           class="geosite-intent"
           data-intent-name="toggleModal"
-          data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-more&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;map_config&quot;,&quot;baselayers&quot;,&quot;{{ $index }}&quot;]}}">
+          data-intent-data="{&quot;id&quot;:&quot;geosite-modal-layer-more&quot;,&quot;dynamic&quot;:{&quot;layer&quot;:[&quot;map_config&quot;,&quot;baselayers&quot;,&quot;{{ $index }}&quot;]}}"
+          data-intent-ctrl="geosite-map-legend">
           <i class="fa fa-info-circle"></i>
         </a>
       </div><!--
@@ -19,7 +20,8 @@
              data-intent-name="switchBaseLayer"
              data-intent-data="{&quot;layer&quot;:&quot;{{ layer.id }}&quot;}"
              data-intent-class-on="geosite-on"
-             data-intent-class-off="">
+             data-intent-class-off=""
+             data-intent-ctrl="geosite-map-legend">
              <i class="fa fa-eye geosite-on"></i><i class="fa fa-eye-slash geosite-off"></i>
            </a>
          </div><!--

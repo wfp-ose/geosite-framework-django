@@ -54,7 +54,7 @@ geosite.ui_init_slider_slider = function($interpolate, $scope, that, type, range
           var newValue = that.data('options')[ui.value];
           var filter = {};
           filter[output] = newValue;
-          geosite.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
+          geosite.api.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
       }
     });
   }
@@ -74,7 +74,7 @@ geosite.ui_init_slider_slider = function($interpolate, $scope, that, type, range
             var newValue = ui.values;
             var filter = {};
             filter[output] = newValue;
-            geosite.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
+            geosite.api.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
         }
       });
     }
@@ -92,7 +92,7 @@ geosite.ui_init_slider_slider = function($interpolate, $scope, that, type, range
             var newValue = ui.value / 100.0;
             var filter = {};
             filter[output] = newValue;
-            geosite.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
+            geosite.api.intend("filterChanged", {"layer":"popatrisk", "filter":filter}, $scope);
         }
       });
     }

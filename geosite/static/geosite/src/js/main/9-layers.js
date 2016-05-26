@@ -32,7 +32,7 @@ geosite.layers.init_featurelayer_post = function($scope, live, id, fl, visible)
     {
       fl.addTo(live["map"]);
     }
-    geosite.intend("layerLoaded", {'type':'featurelayer', 'layer': id, 'visible': visible}, $scope);
+    geosite.api.intend("layerLoaded", {'type':'featurelayer', 'layer': id, 'visible': visible}, $scope);
   }
   else
   {

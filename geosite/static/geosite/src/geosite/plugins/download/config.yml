@@ -1,0 +1,7 @@
+---
+controllers:
+  - controller_download.js
+directives:
+  - geositeModalDownload.js
+templates:
+  - modal_download.tpl.html

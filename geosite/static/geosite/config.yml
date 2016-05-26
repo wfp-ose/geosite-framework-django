@@ -8,6 +8,8 @@ plugins:
   - legend
   - map
   - welcome
+  - about
+  - download
 dependencies:
   production:
     project: []

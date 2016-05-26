@@ -1,0 +1,7 @@
+---
+controllers:
+  - controller_about.js
+directives:
+  - geositeModalAbout.js
+templates:
+  - modal_about.tpl.html

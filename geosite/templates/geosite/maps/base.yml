@@ -1,8 +1,14 @@
 {% block title %}
 title: Map
 {% endblock %}
+{% block about %}
+about:
+{% endblock %}
 {% block welcome %}
 welcome:
+{% endblock %}
+{% block download %}
+download:
 {% endblock %}
 {% block description %}
 description: ""

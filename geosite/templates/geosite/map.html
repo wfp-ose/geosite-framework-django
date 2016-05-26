@@ -51,6 +51,12 @@
         </div>
       </div>
       {% block sidebar_right %}{% endblock %}
+      {% block modals %}
+      <div id="geosite-modals">
+      {% include "geosite/_includes/about.html" %}
+      {% include "geosite/_includes/download.html" %}
+      </div>
+      {% endblock %}
     </div>
     {% block footer %}{% endblock %}
 </div>
