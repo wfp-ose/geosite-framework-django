@@ -2,7 +2,7 @@ geosite.filters["formatMonth"] = function()
 {
   return function(value, type)
   {
-    if(value != undefined && value != "")
+    if(value != undefined && value !== "")
     {
       if(type == "long")
       {

@@ -2,7 +2,7 @@ geosite.filters["formatFloat"] = function()
 {
   return function(value, decimals)
   {
-    if(value != undefined && value != "")
+    if(value != undefined && value !== "")
     {
       if(decimals != undefined)
       {

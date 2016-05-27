@@ -2,7 +2,7 @@ geosite.filters["formatInteger"] = function()
 {
   return function(value, type, delimiter)
   {
-    if(value != undefined && value != "")
+    if(value != undefined && value !== "")
     {
       if(type == "delimited")
       {
