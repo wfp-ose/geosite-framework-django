@@ -12,6 +12,10 @@ geosite.filters["formatMonth"] = function()
       {
         return months_short_3[value-1];
       }
+      else if(type == "int2")
+      {
+        return value < 10 ? ('0'+ value.toString()) : value.toString();
+      }
       else
       {
         return value.toString();
