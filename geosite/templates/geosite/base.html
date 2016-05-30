@@ -22,6 +22,7 @@
     <link href="{{ STATIC_URL }}geosite/lib/typeahead.js-bootstrap-css/typeaheadjs.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL}}geosite/lib/c3/{{ GEOSITE_STATIC_DEPS.c3.version }}/c3.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ STATIC_URL}}geosite/lib/leaflet/1.0.0-b1/leaflet.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ STATIC_URL}}geosite/lib/Leaflet.label/leaflet-master/leaflet.label.css" type="text/css" media="all" />
     <link href="{{ STATIC_URL}}geosite/lib/font-awesome/{{ GEOSITE_STATIC_DEPS.fontawesome.version }}/css/font-awesome.min.css" rel="stylesheet"/>
     <!-- CSS / Internal -->
     {% block head_main_css %}
@@ -81,11 +82,13 @@
     <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-simpleheat.js"></script>
     <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatcanvas.js"></script>
     <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatlayer.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.label/leaflet-master/leaflet.label-src.js"></script>
     {% else %}
     <script src="{{ STATIC_URL}}geosite/lib/leaflet/1.0.0-b1/leaflet.js"></script>
     <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-simpleheat.js"></script>
     <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatcanvas.js"></script>
     <script src="{{ STATIC_URL}}geosite/lib/Leaflet.heat/custom/wfp-heatlayer.js"></script>
+    <script src="{{ STATIC_URL}}geosite/lib/Leaflet.label/leaflet-master/leaflet.label.js"></script>
     {% endif %}
     <!-- JavaScript / Internal -->
     {% block head_main_js %}
