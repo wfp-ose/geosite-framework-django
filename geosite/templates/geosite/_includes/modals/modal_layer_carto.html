@@ -40,7 +40,7 @@
               <br>
               <br>
               {% if view.legend.symbol.type == "graduated" %}
-              <div style="display: inline-block; vertical-align:top;">{{ view.label_left|safe }}</div>
+              <div style="display: inline-block; vertical-align:top;">{{ view.ramp.label.left|safe }}</div>
               <svg width="300px" height="50px" version="1.0" xmlns="http://www.w3.org/2000/svg">
               {% with numberOfColors=view.colors.ramp|length %}
               {% for color in view.colors.ramp %}
@@ -63,7 +63,7 @@
               {% endfor %}
               {% endwith %}
               </svg>
-              <div style="display: inline-block; vertical-align:top;">{{ view.label_right|safe }}</div>
+              <div style="display: inline-block; vertical-align:top;">{{ view.ramp.label.right|safe }}</div>
               {% elif view.legend.symbol.type == "graphic" %}
                 {% if layer.type == "WMS" and layer.wms.layers %}
                   {% for layer2 in layer.wms.layers %}
