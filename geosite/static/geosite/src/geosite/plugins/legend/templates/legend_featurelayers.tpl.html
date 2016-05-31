@@ -100,7 +100,7 @@
           </div>
         </a>
       </div><!--
-      --><div class="geosite-map-legend-item-label">
+      --><div class="geosite-map-legend-item-label" style="{{ layer.key | layer_is_visible : state | ternary : '' : 'opacity: 0.4;' }}">
         <span ng-bind-html="layer.item.legend.label | md2html"></span>
       </div>
     </div>

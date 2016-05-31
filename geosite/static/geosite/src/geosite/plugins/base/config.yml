@@ -34,3 +34,5 @@ filters:
   - position_x.js
   - width_x.js
   - length.js
+  - layer_is_visible.js
+  - ternary.js

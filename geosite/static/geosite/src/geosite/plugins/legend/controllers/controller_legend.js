@@ -23,11 +23,18 @@ geosite.controllers["controller_legend"] = function(
   $scope.updateVariables();
   $scope.$watch('map_config.featurelayers', $scope.updateVariables);
   $scope.$watch('map_config.legendlayers', $scope.updateVariables);
+  $scope.$watch('state', $scope.updateVariables);
   //////////////
   var jqe = $($element);
 
   $scope.$on("refreshMap", function(event, args){
     console.log('args: ', args);
+
+    $scope.$apply(function()
+    {
+      $scope.state = args.state;
+    });
+
     /*var element_featurelayers = jqe.find('.geosite-map-legend-featurelayers');
     $('.geosite-map-legend-item', element_featurelayers).each(function(){
       var layerID = $(this).data('layer');
