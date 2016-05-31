@@ -4,6 +4,6 @@ geosite.filters["layer_is_visible"] = function()
   {
     state = state || $("#geosite-main").scope().state;
     var visibleFeatureLayers = state.view.featurelayers;
-    return $.inArray(layerID, visibleFeatureLayers) != -1;
+    return (layerID == state.view.baselayer) || $.inArray(layerID, visibleFeatureLayers) != -1;
   };
 };

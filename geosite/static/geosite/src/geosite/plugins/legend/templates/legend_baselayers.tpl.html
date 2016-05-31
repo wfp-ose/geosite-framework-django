@@ -28,7 +28,9 @@
       --><div class="geosite-map-legend-item-symbol" style="width: 10px;"></div>
     </div><!--
     --><div class="geosite-map-legend-item-right">
-      <div class="geosite-map-legend-item-label" style="width: 100%;">
+      <div
+        class="geosite-map-legend-item-label"
+        style="{{ layer.id | layer_is_visible : state | ternary : 'width: 100%;' : 'width: 100%;opacity: 0.4;' }}">
         <span ng-bind-html="layer.legend.label | md2html"></span>
       </div>
     </div>
