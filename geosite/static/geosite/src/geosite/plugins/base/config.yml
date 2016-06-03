@@ -1,11 +1,14 @@
 ---
-controllers: []
+controllers:
+  - controller_base.js
 directives:
   - svg.js
   - onRepeatDone.js
+  - geositeModalDashboardConfig.js
 enumerations:
   - dates.js
-templates: []
+templates:
+  - modal_dashboard_config.tpl.html
 filters:
   - default.js
   - join.js
@@ -27,6 +30,7 @@ filters:
   - url_shapefile.js
   - url_geojson.js
   - url_kml.js
+  - url_describefeaturetype.js
   - breakpoint.js
   - breakpoints.js
   - formatBreakpoint.js
@@ -36,3 +40,8 @@ filters:
   - length.js
   - layer_is_visible.js
   - ternary.js
+  - common/extract.js
+  - common/inArray.js
+  - common/yaml.js
+  - common/replace.js
+  - common/prepend.js

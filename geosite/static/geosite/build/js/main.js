@@ -1,8 +1,83 @@
 var geosite = {
+  'init': {},
   'directives': {},
+  'controllers': {},
   'filters': {},
   'vecmath': {},
-  'tilemath': {}
+  'tilemath': {},
+  'api': {}
+};
+
+geosite.init.listeners = function()
+{
+  $('body').on('click', '.geosite-intent', function(event) {
+    event.preventDefault();  // For anchor tags
+    var that = $(this);
+    var scope = angular.element('[ng-controller='+that.data('intent-ctrl')+']').scope();
+    if(that.hasClass('geosite-toggle'))
+    {
+      if(that.hasClass('geosite-off'))
+      {
+        that.removeClass('geosite-off');
+
+        geosite.api.intend(that.data('intent-names')[0], that.data('intent-data'), scope);
+      }
+      else
+      {
+        that.addClass('geosite-off');
+        geosite.api.intend(that.data('intent-names')[1], that.data('intent-data'), scope);
+      }
+    }
+    else if(that.hasClass('geosite-radio'))
+    {
+      var siblings = that.parents('.geosite-radio-group:first').find(".geosite-radio").not(that);
+      if(!(that.hasClass('geosite-on')))
+      {
+        that.addClass('geosite-on');
+        if(that.data("intent-class-on"))
+        {
+          that.addClass(that.data("intent-class-on"));
+          siblings.removeClass(that.data("intent-class-on"));
+        }
+        siblings.removeClass('geosite-on');
+        if(that.data("intent-class-off"))
+        {
+          that.removeClass(that.data("intent-class-off"));
+          siblings.addClass(that.data("intent-class-off"));
+        }
+        geosite.api.intend(that.data('intent-name'), that.data('intent-data'), scope);
+      }
+    }
+    else
+    {
+      geosite.api.intend(that.data('intent-name'), that.data('intent-data'), scope);
+    }
+  });
+};
+
+geosite.api.welcome = function(options)
+{
+  options = options || {};
+  var scope = options['$scope'] || options['scope'] || angular.element("#geosite-main").scope();
+  var intentData = {
+    "id": "geosite-modal-welcome",
+    "dynamic": {},
+    "static": {
+      "welcome": scope.map_config["welcome"]
+    }
+  };
+  geosite.api.intend("toggleModal", intentData, scope);
+};
+
+/**
+ * Used for intents (requesting and action), such as opening modals, zooming the map, etc.
+ * @param {string} name of the intent (toggleModal, refreshMap, filterChanged)
+ * @param {object} JSON package for intent
+ * @param {object} Angular Scope object for emiting the event up the DOM.  This should correspond to an element's paranet controller.
+*/
+geosite.api.intend = function(name, data, scope)
+{
+  scope.$emit(name, data);
 };
 
 
@@ -53,67 +128,8 @@ geosite.assert_array_length = function(x, length, fallback)
   }
 };
 
-geosite.intend = function(name, data, scope)
-{
-    scope.$emit(name, data);
-};
-
-geosite.init_intents = function(element, scope)
-{
-  element.on('click', '.geosite-intent', function(event) {
-    event.preventDefault();  // For anchor tags
-    var that = $(this);
-    if(that.hasClass('geosite-toggle'))
-    {
-      if(that.hasClass('geosite-off'))
-      {
-        that.removeClass('geosite-off');
-        geosite.api.intend(that.data('intent-names')[0], that.data('intent-data'), scope);
-      }
-      else
-      {
-        that.addClass('geosite-off');
-        geosite.api.intend(that.data('intent-names')[1], that.data('intent-data'), scope);
-      }
-    }
-    else if(that.hasClass('geosite-radio'))
-    {
-      var siblings = that.parents('.geosite-radio-group:first').find(".geosite-radio").not(that);
-      if(!(that.hasClass('geosite-on')))
-      {
-        that.addClass('geosite-on');
-        if(that.data("intent-class-on"))
-        {
-          that.addClass(that.data("intent-class-on"));
-          siblings.removeClass(that.data("intent-class-on"));
-        }
-        siblings.removeClass('geosite-on');
-        if(that.data("intent-class-off"))
-        {
-          that.removeClass(that.data("intent-class-off"));
-          siblings.addClass(that.data("intent-class-off"));
-        }
-        geosite.api.intend(that.data('intent-name'), that.data('intent-data'), scope);
-      }
-    }
-    else
-    {
-      geosite.api.intend(that.data('intent-name'), that.data('intent-data'), scope);
-    }
-  });
-};
-
-geosite.controllers = {};
 
 geosite.controllers.controller_base = function($scope, $element) {
-
-  this.intend = geosite.intend;
-
-  $scope.toggleModal = function(selector) {
-
-    $(selector).modal('toggle');
-
-  };
 
 };
 
@@ -317,29 +333,24 @@ geosite.init_state = function(state, stateschema)
  * @param {Object} range - Either true, "min", or "max".
  * @param {Object} value - If range is true, then integer array, else integer.
  */
-geosite.ui_init_slider_label = function(that, type, range, value)
+geosite.ui_init_slider_label = function($interpolate, that, type, range, value)
 {
   if(type=="ordinal")
   {
-    var h = that.data('label-template').replace(
-      new RegExp('{{(\\s*)value(\\s*)}}', 'gi'),
-      value);
-    that.data('label').html(h);
+    var ctx = {"value": value};
+    that.data('label').html($interpolate(that.data('label-template'))(ctx));
   }
   else if(type=="continuous")
   {
     if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
-      var h = that.data('label-template')
-        .replace(new RegExp('{{(\\s*)value(s?).0(\\s*)}}', 'gi'), value[0])
-        .replace(new RegExp('{{(\\s*)value(s?).1(\\s*)}}', 'gi'), value[1]);
-      that.data('label').html(h);
+      var ctx = {"values": [value[0], value[1]]};
+      that.data('label').html($interpolate(that.data('label-template'))(ctx));
     }
     else if(range=="min" || range=="max")
     {
-      var h = that.data('label-template')
-        .replace(new RegExp('{{(\\s*)value(\\s*)}}', 'gi'), value);
-      that.data('label').html(h);
+      var ctx = {"value": value};
+      that.data('label').html($interpolate(that.data('label-template'))(ctx));
     }
   }
 };
@@ -347,12 +358,14 @@ geosite.ui_init_slider_label = function(that, type, range, value)
 /**
  * Initializes a filter slider's label
  * @constructor
+ * @param {Object} $interplate - Angular $interpolate function
+ * @param {Object} $scope - Angular $scope
  * @param {Object} that - DOM element for slider
  * @param {string} type - Either ordinal or continuous
  * @param {Object} range - Either true, "min", or "max".
  * @param {Object} value - If range is true, then integer array, else integer.
  */
-geosite.ui_init_slider_slider = function($scope, that, type, range, value, minValue, maxValue, step)
+geosite.ui_init_slider_slider = function($interpolate, $scope, that, type, range, value, minValue, maxValue, step)
 {
   if(type=="ordinal")
   {
@@ -363,7 +376,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
       max: maxValue,
       step: 1,
       slide: function(event, ui) {
-          geosite.ui_update_slider_label.apply(this, [event, ui]);
+          geosite.ui_update_slider_label.apply(this, [$interpolate, event, ui]);
           var output = that.data('output');
           var newValue = that.data('options')[ui.value];
           var filter = {};
@@ -383,7 +396,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
         max: maxValue,
         step: step,
         slide: function(event, ui) {
-            geosite.ui_update_slider_label.apply(this, [event, ui]);
+            geosite.ui_update_slider_label.apply(this, [$interpolate, event, ui]);
             var output = that.data('output');
             var newValue = ui.values;
             var filter = {};
@@ -401,7 +414,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
         max: maxValue,
         step: step,
         slide: function(event, ui) {
-            geosite.ui_update_slider_label.apply(this, [event, ui]);
+            geosite.ui_update_slider_label.apply(this, [$interpolate, event, ui]);
             var output = that.data('output');
             var newValue = ui.value / 100.0;
             var filter = {};
@@ -420,7 +433,7 @@ geosite.ui_init_slider_slider = function($scope, that, type, range, value, minVa
  * @param {Object} event - A jQuery UI event object
  * @param {Object} author - A jQuery UI ui object
  */
-geosite.ui_update_slider_label = function(event, ui)
+geosite.ui_update_slider_label = function($interpolate, event, ui)
 {
   var that = $(this);
   var type = that.data('type');
@@ -428,25 +441,20 @@ geosite.ui_update_slider_label = function(event, ui)
 
   if(type=="ordinal")
   {
-    var v2 = that.data('options')[ui.value];
-    var h = that.data('label-template')
-      .replace(new RegExp('{{(\\s*)value(\\s*)}}', 'gi'), v2);
-    that.data('label').html(h);
+    var ctx = {"value": that.data('options')[ui.value]};
+    that.data('label').html($interpolate(that.data('label-template'))(ctx));
   }
   else if(type=="continuous")
   {
     if(($.type(range) == "boolean" && range ) || (range.toLowerCase() == "true"))
     {
-      var h = that.data('label-template')
-        .replace(new RegExp('{{(\\s*)value(s?).0(\\s*)}}', 'gi'), (ui.values[0]))
-        .replace(new RegExp('{{(\\s*)value(s?).1(\\s*)}}', 'gi'), (ui.values[1]));
-      that.data('label').html(h);
+      var ctx = {"values": [ui.values[0], ui.values[1]]};
+      that.data('label').html($interpolate(that.data('label-template'))(ctx));
     }
     else if(range=="min" || range=="max")
     {
-      var h = that.data('label-template')
-        .replace(new RegExp('{{(\\s*)value(\\s*)}}', 'gi'), (ui.value / 100.0));
-      that.data('label').html(h);
+      var ctx = {"value": (ui.value / 100.0)};
+      that.data('label').html($interpolate(that.data('label-template'))(ctx));
     }
   }
 };
@@ -482,6 +490,14 @@ var getHashValue = function(keys, type)
         if(type == "integer")
         {
           value = (value != undefined && value != null && value != "") ? parseInt(value, 10) : undefined;
+        }
+        else if(type == "stringarray")
+        {
+          if(value != undefined)
+          {
+            var newValue = value.split(",");
+            value = newValue;
+          }
         }
         else if(type == "integerarray")
         {
@@ -522,6 +538,10 @@ var hasHashValue = function(keys)
 {
     var value = getHashValue(keys);
     return value != undefined && value != null && value != "";
+};
+var getHashValueAsStringArray = function(keys)
+{
+  return getHashValue(keys, "stringarray");
 };
 var getHashValueAsInteger = function(keys)
 {
@@ -644,7 +664,15 @@ geosite.codec.parseAttributes  = function(element, fields)
 
 geosite.popup = {};
 
-geosite.popup.buildField = function(field, layer, feature)
+geosite.popup.buildChart = function(chart, layer, feature, state)
+{
+  var html = "";
+  html += "<div style=\"text-align:center;\"><b>"+chart.label+"</b></div><br>";
+  html += "<div id=\""+chart.id+"\" class=\"geosite-popup-chart\"></div>";
+  return html;
+}
+
+geosite.popup.buildField = function(field, layer, feature, state)
 {
   var output = field["output"] || field["attribute"];
   var html = undefined;
@@ -707,7 +735,7 @@ geosite.popup.buildField = function(field, layer, feature)
   return html;
 };
 
-geosite.popup.buildPopupTemplate = function(popup, layer, feature)
+geosite.popup.buildPopupTemplate = function(popup, layer, feature, state)
 {
   var panes = popup.panes;
   var popupTemplate = "";
@@ -722,15 +750,34 @@ geosite.popup.buildPopupTemplate = function(popup, layer, feature)
   {
     var pane = panes[i];
     var popupFields = [];
-    for(var j = 0; j < pane.fields.length; j++)
+    var popupCharts = [];
+    if("fields" in pane)
     {
-      var popupField = geosite.popup.buildField(pane.fields[j], layer, feature);
-      if(popupField != undefined)
+      for(var j = 0; j < pane.fields.length; j++)
       {
-        popupFields.push(popupField);
+        var popupField = geosite.popup.buildField(pane.fields[j], layer, feature, state);
+        if(popupField != undefined)
+        {
+          popupFields.push(popupField);
+        }
+      }
+    }
+    if("charts" in pane)
+    {
+      for(var j = 0; j < pane.charts.length; j++)
+      {
+        var popupChart = geosite.popup.buildChart(pane.charts[j], layer, feature, state);
+        if(popupChart != undefined)
+        {
+          popupCharts.push(popupChart);
+        }
       }
     }
     var paneContent = popupFields.join("<br>");
+    if(popupCharts.length > 0)
+    {
+      paneContent += "<hr>" + popupCharts.join("<br>");
+    }
     paneContents.push(paneContent);
   }
   //////////////////
@@ -738,23 +785,26 @@ geosite.popup.buildPopupTemplate = function(popup, layer, feature)
   {
     var tabs = [];
     var pane = panes[0];
-    tabs.push("<li class=\"active\"><a data-toggle=\"tab\" href=\"#"+pane.id+"\">"+pane.tab.label+"</a></li>");
+    var html_tab ="<li class=\"active\"><a data-toggle=\"tab\" href=\"#"+pane.id+"\">"+pane.tab.label+"</a></li>";
+    tabs.push(html_tab);
     for(var i = 1; i < panes.length; i++)
     {
       pane = panes[i];
-      tabs.push("<li><a data-toggle=\"tab\" href=\"#"+pane.id+"\">"+pane.tab.label+"</a></li>");
+      html_tab = "<li><a data-toggle=\"tab\" href=\"#"+pane.id+"\">"+pane.tab.label+"</a></li>"
+      tabs.push(html_tab);
     }
-    var tab_html = "<ul class=\"nav nav-tabs nav-justified\">"+tabs.join("")+"</ul>";
+    var html_tabs = "<ul class=\"nav nav-tabs nav-justified\">"+tabs.join("")+"</ul>";
     ///////////////
     var paneContentsWithWrapper = [];
-    paneContentsWithWrapper.push("<div id=\""+panes[0].id+"\" class=\"tab-pane fade in active\">"+paneContents[0]+"</div>");
+    var html_pane = "<div id=\""+panes[0].id+"\" class=\"tab-pane fade in active\">"+paneContents[0]+"</div>";
+    paneContentsWithWrapper.push(html_pane);
     for(var i = 1; i < panes.length; i++)
     {
-      paneContentsWithWrapper.push("<div id=\""+panes[i].id+"\" class=\"tab-pane fade\">"+paneContents[i]+"</div>");
+      html_pane = "<div id=\""+panes[i].id+"\" class=\"tab-pane fade\">"+paneContents[i]+"</div>";
+      paneContentsWithWrapper.push(html_pane);
     }
     ///////////////
-    var content_html = "<div class=\"tab-content\">"+paneContentsWithWrapper.join("")+"</div>";
-    popupTemplate += tab_html + content_html;
+    popupTemplate += html_tabs + "<div class=\"tab-content\">"+paneContentsWithWrapper.join("")+"</div>";
   }
   else
   {
@@ -763,16 +813,21 @@ geosite.popup.buildPopupTemplate = function(popup, layer, feature)
   return popupTemplate;
 };
 
-geosite.popup.openPopup = function($interpolate, featureLayer, feature, location, map)
+geosite.popup.buildPopupContent = function($interpolate, featureLayer, feature, state)
 {
-  var fl = featureLayer;
-  var popupTemplate = geosite.popup.buildPopupTemplate(fl.popup, featureLayer, feature);
+  var popupTemplate = geosite.popup.buildPopupTemplate(featureLayer.popup, featureLayer, feature, state);
   var ctx = {
     'layer': featureLayer,
-    'feature': feature
+    'feature': feature,
+    'state': state
   };
-  var popupContent = $interpolate(popupTemplate)(ctx);
-  var popup = new L.Popup({maxWidth: (fl.popup.maxWidth || 400)}, undefined);
+  return $interpolate(popupTemplate)(ctx);
+};
+
+geosite.popup.openPopup = function($interpolate, featureLayer, feature, location, map, state)
+{
+  var popupContent = geosite.popup.buildPopupContent($interpolate, featureLayer, feature, state);
+  var popup = new L.Popup({maxWidth: (featureLayer.popup.maxWidth || 400)}, undefined);
   popup.setLatLng(new L.LatLng(location.lat, location.lon));
   popup.setContent(popupContent);
   map.openPopup(popup);
@@ -976,4 +1031,911 @@ geosite.layers.init_featurelayers = function(featureLayers, $scope, live, map_co
   $.each(featureLayers, function(id, layerConfig){
     geosite.layers.init_featurelayer(id, layerConfig, $scope, live, map_config);
   });
+};
+
+var MONTHS_NUM = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+//Array(12).fill().map((x,i)=>i)
+
+var MONTHS_LONG =[
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"];
+
+var MONTHS_SHORT3 =
+[
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec"];
+
+var MONTHS_ALL = $.map(MONTHS_NUM, function(num, i){
+  return {
+    'num': num,
+    'short3': MONTHS_SHORT3[i],
+    'long': MONTHS_LONG[i]
+  };
+});
+
+var DAYSOFTHEWEEK = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday'];
+
+geosite.filters["default"] = function()
+{
+  return function(value, fallback)
+  {
+    return value || fallback;
+  };
+};
+
+geosite.filters["join"] = function()
+{
+    return function(array, arg)
+    {
+        if (Array.isArray(array))
+        {
+            return array.join(arg);
+        }
+        else
+        {
+            return array;
+        }
+    };
+};
+
+geosite.filters["first"] = function()
+{
+    return function(array)
+    {
+        if (!Array.isArray(array))
+        {
+            return array;
+        }
+        return array[0];
+    };
+};
+
+geosite.filters["last"] = function()
+{
+    return function(arr)
+    {
+        if (!Array.isArray(arr))
+        {
+            return arr;
+        }
+
+        if(arr.length == 0)
+        {
+            return undefined;
+        }
+
+        return arr[arr.length - 1];
+    };
+};
+
+geosite.filters["formatInteger"] = function()
+{
+  return function(value, type, delimiter)
+  {
+    if(value != undefined && value !== "")
+    {
+      if(type == "delimited")
+      {
+        delimiter = delimiter || ',';
+        var str = Math.round(value).toString(); // Round in case value is a float
+        var pattern = new RegExp('(\\d+)(\\d{3})','gi');
+        while(pattern.test(str)){str=str.replace(pattern,'$1'+ delimiter +'$2');}
+        return str;
+      }
+      else
+      {
+        return Math.round(value).toString();
+      }
+    }
+    else
+    {
+        return "";
+    }
+  };
+};
+
+geosite.filters["formatArray"] = function()
+{
+  return function(arr)
+  {
+      if(Array.isArray(arr))
+      {
+        if(arr.length == 0)
+        {
+          return "";
+        }
+        else if(arr.length == 1)
+        {
+          return arr[0];
+        }
+        else if(arr.length == 2)
+        {
+          return arr.join(" and ");
+        }
+        else // greater than 2
+        {
+          return arr.slice(0,-1).join(", ")+", and "+arr[arr.length - 1];
+        }
+      }
+      else
+      {
+          return arr;
+      }
+  };
+};
+
+geosite.filters["formatMonth"] = function()
+{
+  return function(value, type)
+  {
+    if(value != undefined && value !== "")
+    {
+      if(type == "long")
+      {
+        return months_long[value-1];
+      }
+      else if(type == "short3" || type == "short_3")
+      {
+        return months_short_3[value-1];
+      }
+      else if(type == "int2")
+      {
+        return value < 10 ? ('0'+ value.toString()) : value.toString();
+      }
+      else
+      {
+        return value.toString();
+      }
+    }
+    else
+    {
+      return ""
+    }
+  };
+};
+
+geosite.filters["md2html"] = function()
+{
+  return function(text)
+  {
+    if(text != undefined)
+    {
+      var converter = new showdown.Converter();
+      html = converter.makeHtml(text);
+      // Remove Prefix/Suffix Paragraph Tags
+      html = html.substring("<p>".length, html.length - "</p>".length);
+      // Open Links in New Windows
+      var pattern = new RegExp("(<a .*)>(.*?)</a>", "gi");
+      html = html.replace(pattern, '$1 target="_blank">$2</a>');
+      // Replace New Line characters with Line Breaks
+      html = html.replace(new RegExp('\n', 'gi'),'<br>');
+      return html;
+    }
+    else
+    {
+      return "";
+    }
+  };
+};
+
+geosite.filters["percent"] = function()
+{
+  return function(value, denominator)
+  {
+    return 100.0 * value / denominator;
+  };
+};
+
+geosite.filters["tabLabel"] = function()
+{
+  return function(value)
+  {
+    return value.split(" ").length == 2 ? value.replace(' ', '<br>') : value;
+  };
+};
+
+geosite.filters["as_float"] = function()
+{
+  return function(value)
+  {
+    return 1.0 * value;
+  };
+};
+
+geosite.filters["choose"] = function()
+{
+  return function(value, arg)
+  {
+    if(Array.isArray(arg))
+    {
+      var arr = arg;
+      return value + arr[value % arr.length];
+    }
+    else
+    {
+      var arr = Array.prototype.slice.call(arguments, [1]);
+      return arr[value % arr.length];
+    }
+  };
+};
+
+geosite.filters["add"] = function()
+{
+  return function(value, arg)
+  {
+    if(Array.isArray(arg))
+    {
+      var arr = arg;
+      return value + arr[value % arr.length];
+    }
+    else if(arguments.length > 2)
+    {
+      var arr = Array.prototype.slice.call(arguments, [1]);
+      return value + arr[value % arr.length];
+    }
+    else
+    {
+      return value + arg;
+    }
+  };
+};
+
+geosite.filters["default_if_undefined"] = function()
+{
+  return function(value, fallback)
+  {
+    return value != undefined ? value : fallback;
+  };
+};
+
+geosite.filters["title"] = function()
+{
+  return function(value)
+  {
+    return $.type(value) === "string" ? value.toTitleCase() : value;
+  };
+};
+
+geosite.filters["as_array"] = function()
+{
+  return function(value)
+  {
+    if($.isArray(value))
+    {
+      return value;
+    }
+    else
+    {
+      return $.map(value, function(item, key){
+        return {'key': key, 'item': item};
+      });
+    }
+  };
+};
+
+geosite.filters["sortItemsByArray"] = function()
+{
+  return function(value, arg)
+  {
+    if($.isArray(value))
+    {
+      value = $.grep(value,function(x, i){
+        return $.inArray(x["key"], arg) != -1;
+      });
+      value.sort(function(a, b){
+        return $.inArray(a["key"], arg) - $.inArray(a["key"], arg);
+      });
+      return value;
+    }
+    else
+    {
+      return value;
+    }
+  };
+};
+
+geosite.filters["url_shapefile"] = function()
+{
+    return function(layer, state)
+    {
+        var url = "";
+        if("wfs" in layer)
+        {
+          var typename = "";
+          if("layers" in layer.wms)
+          {
+            typename = layer.wms.layers[0];
+          }
+          else if("layers" in layer.wfs)
+          {
+            typename = layer.wfs.layers[0];
+          }
+          var params = {
+            "format_options": "charset:UTF-8",
+            "typename": typename,
+            "outputFormat": "SHAPE-ZIP",
+            "version": "1.0.0",
+            "service": "WFS",
+            "request": "GetFeature"
+          };
+          if(state != undefined)
+          {
+            params["cql_filter"] = "BBOX("+layer.wfs.geometry+", "+state.view.extent+")";
+          }
+          var querystring = $.map(params, function(v, k){return encodeURIComponent(k) + '=' + encodeURIComponent(v);}).join("&");
+          url = layer.wfs.url + "?" + querystring;
+        }
+        return url;
+    };
+};
+
+geosite.filters["url_geojson"] = function()
+{
+    return function(layer, state)
+    {
+        var url = "";
+        if("wfs" in layer)
+        {
+          var typename = "";
+          if("layers" in layer.wms)
+          {
+            typename = layer.wms.layers[0];
+          }
+          else if("layers" in layer.wfs)
+          {
+            typename = layer.wfs.layers[0];
+          }
+          var params = {
+            "format_options": "charset:UTF-8",
+            "typename": typename,
+            "outputFormat": "json",
+            "version": "1.0.0",
+            "service": "WFS",
+            "request": "GetFeature"
+          };
+          if(state != undefined)
+          {
+            params["cql_filter"] = "BBOX("+layer.wfs.geometry+", "+state.view.extent+")";
+          }
+          var querystring = $.map(params, function(v, k){return encodeURIComponent(k) + '=' + encodeURIComponent(v);}).join("&");
+          url = layer.wfs.url + "?" + querystring;
+        }
+        return url;
+    };
+};
+
+geosite.filters["url_kml"] = function()
+{
+    return function(layer, state)
+    {
+        var url = "";
+        if("kml" in layer)
+        {
+          var typename = "";
+          if("layers" in layer.wms)
+          {
+            typename = layer.wms.layers[0];
+          }
+          else if("layers" in layer.wfs)
+          {
+            typename = layer.wfs.layers[0];
+          }
+          var params = {
+            "mode": "download",
+            "layers": typename
+          };
+          if(state != undefined)
+          {
+            params["cql_filter"] = "BBOX("+layer.wfs.geometry+", "+state.view.extent+")";
+          }
+          var querystring = $.map(params, function(v, k){return encodeURIComponent(k) + '=' + encodeURIComponent(v);}).join("&");
+          url = layer.kml.url + "?" + querystring;
+        }
+        return url;
+    };
+};
+
+geosite.filters["url_describefeaturetype"] = function()
+{
+    return function(layer)
+    {
+        var url = "";
+        if("wfs" in layer)
+        {
+          var version = layer.wfs.version || "1.0.0";
+          var params = {
+            "service": "WFS",
+            "request": "DescribeFeatureType",
+            "version": version
+          };
+
+          var typename = "";
+          if("layers" in layer.wms)
+          {
+            typename = layer.wms.layers.unique().join(",");
+          }
+          else if("layers" in layer.wfs)
+          {
+            typename = layer.wfs.layers.unique().join(",");
+          }
+          if(version == "1.1.0" || version == "1.0.0")
+          {
+            params["typeName"] = typename;
+          }
+          else
+          {
+            params["typeNames"] = typename;
+          }
+
+          var querystring = $.map(params, function(v, k){return encodeURIComponent(k) + '=' + encodeURIComponent(v);}).join("&");
+          url = layer.wfs.url + "?" + querystring;
+        }
+        return url;
+    };
+};
+
+geosite.filters["breakpoint"] = function()
+{
+    return function(style, index)
+    {
+      var breakpoints = geosite.breakpoints[style.styles.default.dynamic.options.breakpoints];
+      if(breakpoints != undefined && breakpoints.length > 0)
+      {
+        return breakpoints[index];
+      }
+      else
+      {
+        return -1;
+      }
+    };
+};
+
+geosite.filters["breakpoints"] = function()
+{
+    return function(style)
+    {
+      var breakpoints = geosite.breakpoints[style.styles.default.dynamic.options.breakpoints];
+      if(breakpoints != undefined && breakpoints.length > 0)
+      {
+        return breakpoints;
+      }
+      else
+      {
+        return [];
+      }
+    };
+};
+
+geosite.filters["formatBreakpoint"] = function()
+{
+    return function(value)
+    {
+      if(Number.isInteger(value))
+      {
+        return geosite.filters["formatInteger"]()(value, 'delimited', ' ');
+      }
+      else if($.isNumeric(value))
+      {
+        return geosite.filters["formatFloat"]()(value, 2);
+      }
+      else
+      {
+        return "" + value;
+      }
+    };
+};
+
+geosite.filters["formatFloat"] = function()
+{
+  return function(value, decimals)
+  {
+    if(value != undefined && value !== "")
+    {
+      if(decimals != undefined)
+      {
+        return value.toFixed(decimals);
+      }
+      else
+      {
+        return value.toString();
+      }
+    }
+    else
+    {
+      return "";
+    }
+  };
+};
+
+geosite.filters["position_x"] = function()
+{
+    return function(domain, index, containerWidth, padding)
+    {
+      var parse_container_width = function(w)
+      {
+        return $.isNumeric(w) ? w : parseInt(w.substring(0, w.indexOf('px')), 10);
+      };
+      var actualWidth = parse_container_width(containerWidth) - (padding * 2);
+      return padding + (actualWidth * index / domain);
+    };
+};
+
+geosite.filters["width_x"] = function()
+{
+    return function(domain, containerWidth, padding)
+    {
+      var parse_container_width = function(w)
+      {
+        return $.isNumeric(w) ? w : parseInt(w.substring(0, w.indexOf('px')), 10);
+      };
+      var actualWidth = parse_container_width(containerWidth)  - (padding * 2);
+      return actualWidth / domain;
+    };
+};
+
+geosite.filters["len"] = geosite.filters["length"] = function()
+{
+  return function(value)
+  {
+    if($.isArray(value))
+    {
+      return value.length;
+    }
+    else
+    {
+      return 0;
+    }
+  };
+};
+
+geosite.filters["layer_is_visible"] = function()
+{
+  return function(layerID, state)
+  {
+    state = state || $("#geosite-main").scope().state;
+    var visibleFeatureLayers = state.view.featurelayers;
+    return (layerID == state.view.baselayer) || $.inArray(layerID, visibleFeatureLayers) != -1;
+  };
+};
+
+geosite.filters["ternary"] = function()
+{
+  return function(value, t, f)
+  {
+    return value ? t : f;
+  };
+};
+
+geosite.directives["ngX"] = function(){
+  return {
+    scope: true,
+    link: function ($scope, $element, attrs){
+      $scope.$watch(attrs.ngX, function(value) {
+        $element.attr('x', value);
+      });
+    }
+  };
+};
+geosite.directives["ngY"] = function(){
+  return {
+    scope: true,
+    link: function ($scope, $element, attrs){
+      $scope.$watch(attrs.ngY, function(value) {
+        $element.attr('y', value);
+      });
+    }
+  };
+};
+geosite.directives["ngWidth"] = function(){
+  return {
+    scope: true,
+    link: function ($scope, $element, attrs){
+      $scope.$watch(attrs.ngWidth, function(value) {
+        $element.attr('width', value);
+      });
+    }
+  };
+};
+geosite.directives["ngR"] = function(){
+  return {
+    scope: true,
+    link: function ($scope, $element, attrs){
+      $scope.$watch(attrs.ngR, function(value) {
+        $element.attr('r', value);
+      });
+    }
+  };
+};
+geosite.directives["ngFill"] = function(){
+  return {
+    scope: true,
+    link: function ($scope, $element, attrs){
+      $scope.$watch(attrs.ngFill, function(value) {
+        $element.attr('fill', value);
+      });
+    }
+  };
+};
+
+geosite.directives["onRepeatDone"] = function(){
+  return {
+    restriction: 'A',
+    link: function($scope, element, attributes ) {
+      $scope.$emit(attributes["onRepeatDone"] || "repeat_done", {
+        'element': element,
+        'attributes': attributes
+      });
+    }
+  };
+};
+
+geosite.directives["geositeModalLayerCarto"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    //scope: {
+    //  layer: "=layer"
+    //},
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'modal_layer_carto.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeModalLayerMore"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    //scope: {
+    //  layer: "=layer"
+    //},
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'modal_layer_more.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeModalLayerConfig"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    //scope: {
+    //  layer: "=layer"
+    //},
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'modal_layer_config.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeSymbolCircle"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    scope: {
+      style: "=style"
+    },
+    templateUrl: 'symbol_circle.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeSymbolEllipse"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    scope: {
+      style: "=style"
+    },
+    templateUrl: 'symbol_ellipse.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeSymbolGraduated"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    scope: {
+      style: "=style",  // Text binding / one-way binding
+      containerWidth: "@" // Text binding / one-way binding
+    },
+    templateUrl: 'symbol_graduated.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeSymbolGraphic"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    scope: {
+      style: "=style"
+    },
+    templateUrl: 'symbol_graduated.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeLegendBaselayers"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'legend_baselayers.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeLegendFeaturelayers"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'legend_featurelayers.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeModalWelcome"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    //scope: {
+    //  layer: "=layer"
+    //},
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'modal_welcome.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeModalAbout"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    //scope: {
+    //  layer: "=layer"
+    //},
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'modal_about.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.directives["geositeModalDownload"] = function(){
+  return {
+    restrict: 'EA',
+    replace: true,
+    //scope: {
+    //  layer: "=layer"
+    //},
+    scope: true,  // Inherit exact scope from parent controller
+    templateUrl: 'modal_download.tpl.html',
+    link: function ($scope, element, attrs){
+    }
+  };
+};
+
+geosite.controllers["controller_modal"] = function(
+  $scope,
+  $element,
+  $controller,
+  state,
+  map_config,
+  live)
+{
+  angular.extend(this, $controller('GeositeControllerBase', {$element: $element, $scope: $scope}));
+  //
+  var jqe = $($element);
+
+  $scope.test = "blah blah blah";
+};
+
+geosite.controllers["controller_legend"] = function(
+  $scope,
+  $element,
+  $controller,
+  state,
+  map_config,
+  live)
+{
+  angular.extend(this, $controller('GeositeControllerBase', {$element: $element, $scope: $scope}));
+  //
+  $scope.map_config = map_config;
+  $scope.state = state;
+  //////////////
+  // Watch
+  $scope.updateVariables = function(){
+    //$scope.$apply(function() {});
+    var arrayFilter = $scope.map_config.legendlayers;
+    var featurelayers = $.map($scope.map_config.featurelayers, function(item, key){ return {'key': key, 'item': item}; });
+    featurelayers = $.grep(featurelayers,function(x, i){ return $.inArray(x["key"], arrayFilter) != -1; });
+    featurelayers.sort(function(a, b){ return $.inArray(a["key"], arrayFilter) - $.inArray(b["key"], arrayFilter); });
+    $scope.featurelayers = featurelayers;
+  };
+  $scope.updateVariables();
+  $scope.$watch('map_config.featurelayers', $scope.updateVariables);
+  $scope.$watch('map_config.legendlayers', $scope.updateVariables);
+  $scope.$watch('state', $scope.updateVariables);
+  //////////////
+  var jqe = $($element);
+
+  $scope.$on("refreshMap", function(event, args){
+    console.log('args: ', args);
+
+    $scope.$apply(function()
+    {
+      $scope.state = args.state;
+    });
+
+    /*var element_featurelayers = jqe.find('.geosite-map-legend-featurelayers');
+    $('.geosite-map-legend-item', element_featurelayers).each(function(){
+      var layerID = $(this).data('layer');
+      var element_symbol = $(this).find('.geosite-map-legend-item-symbol:first');
+      var styleID = args.state.styles[layerID];
+      var styles = $.grep(geosite.map_config.featurelayers["context"].cartography, function(x, i){
+        return x["id"] == styleID;
+      });
+      var style =  styles.length > 0 ? styles[0] : undefined;
+    });*/
+  });
+};
+
+geosite.controllers["controller_map"] = function($scope, $element, $controller, state, map_config) {
+
+};
+
+geosite.controllers["controller_about"] = function(
+  $scope, $element, $controller, $interpolate, state, map_config, live)
+{
+  angular.extend(this, $controller('GeositeControllerBase', {$element: $element, $scope: $scope}));
+  //angular.extend(this, $controller('GeositeControllerModal', {$element: $element, $scope: $scope}));
+
+};
+
+geosite.controllers["controller_download"] = function(
+  $scope, $element, $controller, $interpolate, state, map_config, live)
+{
+  angular.extend(this, $controller('GeositeControllerBase', {$element: $element, $scope: $scope}));
+  //angular.extend(this, $controller('GeositeControllerModal', {$element: $element, $scope: $scope}));
+
 };

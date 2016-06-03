@@ -1,6 +1,5 @@
 ---
-controllers:
-  - controller_about.js
+controllers: []
 directives:
   - geositeModalAbout.js
 templates:

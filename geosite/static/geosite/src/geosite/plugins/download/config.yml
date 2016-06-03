@@ -1,6 +1,5 @@
 ---
-controllers:
-  - controller_download.js
+controllers: []
 directives:
   - geositeModalDownload.js
 templates:

@@ -1,7 +1,7 @@
 <div class="modal-dialog" role="document">
   <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
       <h4 class="modal-title" id="myModalLabel">Layer / {{ layer.title }}</h4>
     </div>
     <div class="modal-body">
@@ -15,6 +15,14 @@
               role="tab"
               data-toggle="tab"
               style="padding-left:8px; padding-right: 8px;">General</a>
+          </li>
+          <li ng-if="layer.wfs" role="presentation" class="">
+            <a
+              href="#modal-layer-more-attributes"
+              aria-controls="modal-layer-more-attributes"
+              role="tab"
+              data-toggle="tab"
+              style="padding-left:8px; padding-right: 8px;">Attributes</a>
           </li>
           <li ng-if="layer.wms" role="presentation" class="">
             <a
@@ -60,6 +68,16 @@
             <br><br><b>Source:</b> {{ layer.source.name | default:"Not specified" }}
           </div>
           <div
+            ng-if="layer.wfs"
+            id="modal-layer-more-attributes"
+            class="tab-pane fade"
+            role="tabpanel"
+            style="padding: 10px;">
+            <div>
+              Placeholder
+            </div>
+          </div>
+          <div
             ng-if="layer.source"
             id="modal-layer-more-source"
             class="tab-pane fade"
@@ -94,7 +112,7 @@
             <span><b>URL:</b> {{ layer.wfs.url | default:"Not specified" }}</span><br>
             <span><b>Version:</b> {{ layer.wfs.version | default:"Not specified" }}</span><br>
             <hr>
-            <span><a target="_blank" href="{{ layer.wfs.url }}?service=wfs&request=DescribeFeatureType&version={{ layer.wfs.version }}">Describe Feature Type</a><br>
+            <span><a target="_blank" href="{{ layer | url_describefeaturetype }}">Describe Feature Type</a><br>
           </div>
           <div
             ng-if="layer.wfs"

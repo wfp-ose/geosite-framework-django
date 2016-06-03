@@ -2,14 +2,19 @@
 {% load geosite_tags %}
 {% block extra_head %}
   {% block map_config %}
-  <script>
+  <script type="text/javascript" language="Javascript">
     geosite.map_config = {{ map_config_json|safe }};
   </script>
   {% endblock %}
   {% block initial_state %}
-  <script>
+  <script type="text/javascript" language="Javascript">
     geosite.initial_state = {{ state_json|safe }};
     geosite.state_schema = {{ state_schema_json|safe }};
+  </script>
+  {% endblock %}
+  {% block initial_data %}
+  <script type="text/javascript" language="Javascript">
+      geosite.initial_data = {"data":{}};
   </script>
   {% endblock %}
 {% endblock %}
@@ -40,8 +45,6 @@
         data-controller-type="geosite-map">
         {% block map_controllers %}
         {% include "geosite/_includes/map_legend.html" %}
-        {% include "geosite/_includes/map_sidebar_toggle.html" %}
-        {% include "geosite/_includes/map_calendar.html" %}
         {% endblock %}
         <div id="map"
           class="geosite-controller geosite-map-map"
@@ -53,8 +56,9 @@
       {% block sidebar_right %}{% endblock %}
       {% block modals %}
       <div id="geosite-modals">
-      {% include "geosite/_includes/about.html" %}
-      {% include "geosite/_includes/download.html" %}
+      {% include "geosite/_includes/modals/about.html" %}
+      {% include "geosite/_includes/modals/download.html" %}
+      {% include "geosite/_includes/modals/config.html" %}
       </div>
       {% endblock %}
     </div>

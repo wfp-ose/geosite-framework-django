@@ -46,6 +46,11 @@
     <script src="{{ STATIC_URL}}geosite/lib/jquery/{{ GEOSITE_STATIC_DEPS.jquery.version }}/jquery-{{ GEOSITE_STATIC_DEPS.jquery.version }}.min.js"></script>
     <script src="{{ STATIC_URL}}geosite/lib/jquery-ui/{{ GEOSITE_STATIC_DEPS.jqueryui.version }}/jquery-ui.min.js"></script>
     {% endif %}
+    {% if GEOSITE_STATIC_DEBUG.yamljs %}
+    <script src="{{ STATIC_URL}}geosite/lib/yamljs/develop/dist/yaml.js"></script>
+    {% else %}
+    <script src="{{ STATIC_URL}}geosite/lib/yamljs/develop/dist/yaml.min.js"></script>
+    {% endif %}
     {% if GEOSITE_STATIC_DEBUG.select2 %}
     <script src="{{ STATIC_URL}}geosite/lib/select2/select2-{{ GEOSITE_STATIC_DEPS.select2.version }}/dist/js/select2.full.js"></script>
     {% else %}

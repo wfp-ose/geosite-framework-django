@@ -1,13 +1,60 @@
 {% block title %}
 title:
-  type: text
+  type: markdown
   label: Title
   placeholder: Title
   required: true
 {% endblock %}
+{% block about %}
+about:
+  title:
+    type: markdown
+    label: Title
+    placeholder: Title
+    multiline: false
+    required: true
+{% endblock %}
+{% block welcome %}
+welcome:
+  title:
+    type: markdown
+    label: Title
+    placeholder: Title
+    multiline: false
+    required: true
+  intro:
+    type: markdown
+    label: Introduction
+    placeholder: Introduction
+    multiline: true
+    required: true
+  about:
+    type: markdown
+    label: About
+    placeholder: About
+    multiline: true
+    required: true
+{% endblock %}
+{% block legend %}
+legend:
+  title:
+    type: markdown
+    label: Title
+    placeholder: "Legend - Click to Open"
+    multiline: false
+    required: false
+legendlayers:
+  type: stringarray
+  label: Layers
+  placeholder: "Legend Layers"
+  required: false
+{% endblock %}
+{% block download %}
+download:
+{% endblock %}
 {% block description %}
 description:
-  type: text
+  type: markdown
   label: Description
   placeholder: Description
   multiline: true

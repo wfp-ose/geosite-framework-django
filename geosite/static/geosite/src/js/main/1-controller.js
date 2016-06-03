@@ -1,8 +1,3 @@
-
-geosite.controllers.controller_base = function($scope, $element) {
-
-};
-
 geosite.init_controller_base = function(app)
 {
   app.controller("GeositeControllerBase", geosite.controllers.controller_base);
@@ -10,8 +5,7 @@ geosite.init_controller_base = function(app)
 
 geosite.init_controller = function(that, app, controller)
 {
-  var controllerName = that.data('controllerName');
-  var controllerType = that.data('controllerType');
+  var controllerName = that.data('controllerName') || that.attr('id');
 
   app.controller(controllerName, controller || geosite.controllers.controller_base);
 };
